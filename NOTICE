@@ -1,0 +1,36 @@
+Apex Dental community source
+
+Derived from Open Dental, https://github.com/OpenDental/opendental
+Upstream baseline: d804c19546233593d8a66af0591ed118a9e2c794 (24.3.63.0).
+Original copyrights, license headers, and LICENSE are retained.
+Open Dental is an upstream product name; this independent fork claims no
+endorsement or ownership of upstream trademarks.
+
+This source snapshot adds a .NET 8 headless Linux port, browser UI, local
+Whisper transcription, and related practice workflows developed in the fork.
+Public preparation changes dated 2026-10-24:
+- Selected the headless business-layer and web source; omitted Windows apps,
+  private strategy, operational notes, credentials, and service implementations.
+- Replaced direct cloud transcription with an optional generic HTTP interface.
+- Required explicit database credentials; disabled demo seeding by default and
+  removed the demo Admin password reset and publicly advertised demo passwords.
+- Corrected an inherited resource path for case-sensitive Linux builds and
+  updated MailKit to 4.16.0.
+- Added source publication checks and checksum-pinned external dependency restore.
+
+Fork application changes are provided under GPL-2.0-only, consistent with the
+inherited application licensing. Third-party notices remain applicable to their
+respective files. Upstream dependency license texts are retained under
+OpenDental/Resources; see docs/DEPENDENCIES.md for limits of that inventory.
+
+Additional public boundary changes, 2026-10-24:
+- Removed vendor cloud SDKs and embedded provider transports from this snapshot.
+- Replaced cloud mail, document storage, and tax transport with optional HTTP clients.
+- Preserved local SMTP, local/database document storage, and clinician-reviewed dictation.
+- Added a reviewed source inventory and stricter dependency/reference checks.
+
+Release preparation, 2026-10-25:
+- Explicit dictation engine selection, HTTPS service mode, and per-engine disclosure.
+- Independently enabled/scoped mail, storage, transfer, and tax service clients.
+- Public source inventory checks for both index and working tree; neutral tooling.
+- Dated change notices on modified inherited files and preview-accurate site source.

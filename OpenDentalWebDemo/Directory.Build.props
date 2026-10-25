@@ -1,0 +1,11 @@
+<Project>
+  <!-- The Lima VM mounts this repo read-only, so build artifacts must land in the
+       guest home dir. Per-project subdirs prevent OpenDentBusinessCore, Harness,
+       and OpenDentalWebDemo from clobbering each other's obj/bin (a shared obj dir
+       deploys stale assemblies). Harmless on Windows/macOS builds outside the VM:
+       the path only takes effect when ODCORE_ARTIFACTS is set. -->
+  <PropertyGroup Condition="'$(ODCORE_ARTIFACTS)'!=''">
+    <BaseIntermediateOutputPath>$(ODCORE_ARTIFACTS)/obj/$(MSBuildProjectName)/</BaseIntermediateOutputPath>
+    <BaseOutputPath>$(ODCORE_ARTIFACTS)/bin/$(MSBuildProjectName)/</BaseOutputPath>
+  </PropertyGroup>
+</Project>

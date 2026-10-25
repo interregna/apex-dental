@@ -1,0 +1,494 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0f766e">
+<title>Dictation — Apex Dental</title>
+<style>
+:root{
+  --bg:#f6f7f8; --card:#fff; --ink:#111827; --muted:#6b7280; --line:#e5e7eb;
+  --brand:#0f766e; --brand-ink:#fff; --danger:#b42318; --ok:#1c7c34; --warn:#b8860b;
+  --shadow:0 1px 3px rgba(0,0,0,.08),0 1px 2px rgba(0,0,0,.04);
+}
+@media (prefers-color-scheme:dark){
+  :root{ --bg:#0b0f14; --card:#151b23; --ink:#e7ecf1; --muted:#93a1b0; --line:#26303b;
+    --brand:#14b8a6; --brand-ink:#04120f; --shadow:0 1px 3px rgba(0,0,0,.4); }
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--ink);
+  -webkit-text-size-adjust:100%;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
+.wrap{max-width:640px;margin:0 auto;min-height:100vh;min-height:100dvh;display:flex;flex-direction:column}
+header{position:sticky;top:0;z-index:5;background:color-mix(in srgb,var(--bg) 88%,transparent);
+  backdrop-filter:saturate(1.4) blur(8px);border-bottom:1px solid var(--line);padding:12px 16px;
+  display:flex;align-items:center;gap:10px}
+header .logo{font-size:20px}
+header h1{font-size:16px;margin:0;font-weight:650;flex:1}
+header .who{font-size:12px;color:var(--muted);text-align:right;line-height:1.3;cursor:pointer;user-select:none}
+header .who .pw{color:var(--brand);font-weight:700}
+header .who a{color:var(--brand);text-decoration:none;font-weight:600}
+main{flex:1;padding:14px 16px 22px;display:flex;flex-direction:column;gap:11px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px 16px;box-shadow:var(--shadow)}
+label{font-size:13px;color:var(--muted);font-weight:600;display:block;margin-bottom:6px}
+input,select,textarea,button{font:inherit;color:inherit}
+input,select,textarea{width:100%;padding:13px 14px;border:1px solid var(--line);border-radius:12px;
+  background:var(--card);color:var(--ink);-webkit-appearance:none;appearance:none}
+textarea{min-height:104px;resize:vertical;line-height:1.5}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:52px;padding:0 18px;
+  border:1px solid transparent;border-radius:14px;font-weight:650;cursor:pointer;width:100%;background:var(--card);
+  touch-action:manipulation;user-select:none}
+.btn.primary{background:var(--brand);color:var(--brand-ink)}
+.btn.ghost{background:transparent;border-color:var(--line);color:var(--ink)}
+.btn.danger{background:transparent;border-color:color-mix(in srgb,var(--danger) 40%,var(--line));color:var(--danger)}
+.btn:active{transform:translateY(1px)}
+.btn:disabled{opacity:.5}
+.muted{color:var(--muted);font-size:13px}
+.hidden{display:none!important}
+.row{display:flex;gap:10px}
+.row>*{flex:1}
+.tag{display:inline-block;font-size:12px;font-weight:600;padding:3px 9px;border-radius:999px}
+.tag.ok{background:color-mix(in srgb,var(--ok) 14%,transparent);color:var(--ok)}
+.tag.bad{background:color-mix(in srgb,var(--danger) 14%,transparent);color:var(--danger)}
+
+/* segmented chips */
+.seg{display:flex;gap:8px;flex-wrap:wrap}
+.chip{flex:1 1 46%;min-width:0;text-align:center;padding:11px 8px;border:1px solid var(--line);border-radius:12px;
+  background:var(--card);font-size:14px;font-weight:600;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chip[aria-pressed="true"]{background:color-mix(in srgb,var(--brand) 16%,transparent);
+  border-color:color-mix(in srgb,var(--brand) 45%,var(--line));color:var(--brand)}
+
+/* structured procedure cards */
+#entries .ehdr{font-size:12.5px;color:var(--muted);margin-bottom:10px;line-height:1.4}
+.pcard{border:1px solid var(--line);border-radius:12px;padding:10px;margin-bottom:8px;
+  background:color-mix(in srgb,var(--card) 92%,transparent)}
+.prow{display:flex;gap:6px;align-items:center}
+.pcard input{padding:10px 8px;font-size:15px;text-align:center}
+.pc-code{flex:1.5} .pc-tooth{flex:.9} .pc-surf{flex:.9}
+.pc-rm{flex:none;width:40px;height:42px;background:transparent;border:1px solid var(--line);
+  border-radius:10px;color:var(--danger);font-size:16px;cursor:pointer}
+.pc-desc{font-size:12px;color:var(--muted);margin-top:7px;line-height:1.35}
+.pc-results{margin-top:6px;border:1px solid var(--line);border-radius:10px;overflow:hidden;max-height:220px;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.pc-res{padding:11px 10px;border-bottom:1px solid var(--line);cursor:pointer;font-size:13px;line-height:1.3}
+.pc-res:last-child{border-bottom:none}
+.pc-res:active{background:color-mix(in srgb,var(--brand) 12%,transparent)}
+.pc-res b{color:var(--brand);margin-right:6px}
+.pc-res-empty{padding:11px 10px;color:var(--muted);font-size:13px}
+.conf{font-weight:700;padding:1px 6px;border-radius:6px;font-size:10.5px;margin-right:6px;text-transform:uppercase}
+.conf-high{color:var(--ok);background:color-mix(in srgb,var(--ok) 15%,transparent)}
+.conf-med{color:var(--warn);background:color-mix(in srgb,var(--warn) 18%,transparent)}
+.conf-low{color:var(--danger);background:color-mix(in srgb,var(--danger) 15%,transparent)}
+#pc-add{margin-top:2px}
+
+/* big record button */
+.recwrap{display:flex;flex-direction:column;align-items:center;gap:8px;padding:2px 0}
+.mic{width:88px;height:88px;border-radius:50%;border:none;background:var(--brand);color:var(--brand-ink);
+  font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 5px 16px color-mix(in srgb,var(--brand) 42%,transparent);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;touch-action:manipulation}
+.mic .icon{font-size:26px;line-height:1}
+.mic.recording{background:var(--danger);box-shadow:0 0 0 0 color-mix(in srgb,var(--danger) 55%,transparent);
+  animation:pulse 1.4s infinite}
+.mic:disabled{opacity:.5;box-shadow:none}
+@keyframes pulse{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--danger) 55%,transparent)}
+  70%{box-shadow:0 0 0 22px transparent}100%{box-shadow:0 0 0 0 transparent}}
+.timer{font-variant-numeric:tabular-nums;font-size:15px;color:var(--muted);font-weight:600}
+
+/* patient list */
+.plist{display:flex;flex-direction:column;gap:8px;max-height:52dvh;overflow:auto;-webkit-overflow-scrolling:touch}
+.pitem{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:14px;border:1px solid var(--line);
+  border-radius:12px;background:var(--card);cursor:pointer}
+.pitem:active{background:color-mix(in srgb,var(--brand) 8%,transparent)}
+.pitem .nm{font-weight:650}
+.pitem .meta{font-size:12px;color:var(--muted)}
+
+/* sticky accept bar */
+.actionbar{position:sticky;bottom:0;background:color-mix(in srgb,var(--bg) 90%,transparent);
+  backdrop-filter:blur(8px);border-top:1px solid var(--line);padding:12px 16px;display:flex;gap:10px;
+  padding-bottom:calc(12px + env(safe-area-inset-bottom))}
+.actionbar .btn{width:auto}
+.actionbar .btn.primary{flex:2}
+.actionbar .btn.danger{flex:1}
+.banner{font-size:12.5px;line-height:1.5;border-left:3px solid var(--warn);padding:10px 12px;
+  background:color-mix(in srgb,var(--warn) 8%,transparent);border-radius:8px}
+.status{font-size:13px;color:var(--muted);min-height:18px}
+details summary{cursor:pointer;color:var(--muted);font-size:13px}
+.raw{white-space:pre-wrap;font-size:12.5px;color:var(--muted);margin-top:8px;padding:10px;
+  border:1px dashed var(--line);border-radius:10px;font-family:ui-monospace,Menlo,monospace}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <span class="logo">🦷</span>
+    <h1>Dictation</h1>
+    <div class="who" id="who"></div>
+  </header>
+  <main>
+
+    <!-- LOGIN -->
+    <section id="view-login" class="card hidden">
+      <label for="u">Username</label>
+      <input id="u" autocomplete="username" autocapitalize="none" placeholder="e.g. Admin">
+      <div style="height:12px"></div>
+      <label for="p">Password</label>
+      <input id="p" type="password" autocomplete="current-password" placeholder="password">
+      <div style="height:14px"></div>
+      <button class="btn primary" id="btn-login">Sign in</button>
+      <p class="status" id="login-msg" style="margin:10px 0 0"></p>
+    </section>
+
+    <!-- PATIENT PICKER -->
+    <section id="view-patient" class="hidden">
+      <div class="card">
+        <label for="psearch">Patient</label>
+        <input id="psearch" placeholder="Search name…" autocomplete="off" autocapitalize="words">
+        <div style="height:12px"></div>
+        <div class="plist" id="plist"></div>
+      </div>
+    </section>
+
+    <!-- DICTATE -->
+    <section id="view-dictate" class="hidden" style="display:flex;flex-direction:column;gap:14px">
+      <div class="card" id="patbar" style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:13px 16px">
+        <div style="min-width:0">
+          <div class="muted" style="font-size:11px;text-transform:uppercase;letter-spacing:.04em">Charting to</div>
+          <div style="font-weight:700;font-size:17px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" id="patbar-name">—</div>
+          <div class="muted" id="patbar-meta"></div>
+        </div>
+        <button class="btn ghost" id="patbar-change" style="width:auto;min-height:40px;padding:0 14px;flex:none">Change</button>
+      </div>
+      <div class="card">
+        <label>File into</label>
+        <div class="seg" id="targets">
+          <button class="chip" data-t="commlog" aria-pressed="true">Comm log</button>
+          <button class="chip" data-t="note-medical" aria-pressed="false">Medical</button>
+          <button class="chip" data-t="note-treatment" aria-pressed="false">Treatment</button>
+          <button class="chip" data-t="procedures" aria-pressed="false">Procedures</button>
+        </div>
+        <div class="muted" id="dest-hint" style="margin-top:9px;font-size:12.5px;line-height:1.4"></div>
+      </div>
+
+      <div class="card recwrap">
+        <button class="mic" id="mic" disabled><span class="icon">🎙️</span><span id="mic-label">Record</span></button>
+        <div class="timer" id="timer">00:00</div>
+        <div class="status" id="status">Tap to start. Speak, then tap again to stop.</div>
+        <div class="status" id="engine" style="text-align:center"></div>
+        <div id="notice" class="hidden" style="width:100%;text-align:center;font-size:13.5px;font-weight:600;padding:11px 12px;border-radius:12px;line-height:1.4"></div>
+      </div>
+
+      <div class="card hidden" id="draftcard">
+        <label>Proposed <span class="muted" id="meta"></span></label>
+        <div id="entries" class="hidden"></div>
+        <textarea id="text" placeholder="Transcript appears here — edit before accepting."></textarea>
+        <div class="muted" id="count" style="margin-top:6px"></div>
+        <details style="margin-top:10px">
+          <summary>Show verbatim transcript</summary>
+          <div class="raw" id="raw"></div>
+        </details>
+      </div>
+    </section>
+
+  </main>
+
+  <div class="actionbar hidden" id="actionbar">
+    <button class="btn primary" id="accept">Accept &amp; file</button>
+    <button class="btn danger" id="discard">Discard</button>
+  </div>
+</div>
+
+<script>
+"use strict";
+const $=id=>document.getElementById(id);
+async function api(path,opts){
+  const r=await fetch(path,opts);
+  if(r.status===401){ show("login"); throw new Error("Not signed in"); }
+  if(!r.ok) throw new Error((await r.text())||("HTTP "+r.status));
+  const ct=r.headers.get("content-type")||"";
+  return ct.includes("json")?r.json():r.text();
+}
+const esc=s=>String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+let me=null, patient=null, target="commlog", mode="transcribe";
+let rec=null, chunks=[], stream=null, timer=null, secs=0;
+let draft=null, dirty=false, saveTimer=null, patients=[];
+
+function show(view){
+  for(const v of ["login","patient","dictate"]) $("view-"+v).classList.toggle("hidden",v!==view);
+  $("actionbar").classList.toggle("hidden",!(view==="dictate"&&draft));
+  $("who").innerHTML = me ? `${esc(me.userName||"")} <span class="pw" title="Sign out">⏻</span>` : "";
+  $("who").title = me ? "Tap to sign out" : "";
+}
+
+/* ---------- auth ---------- */
+async function boot(){
+  try{ me=await api("/api/auth/me"); }catch{ me=null; }
+  if(me&&me.userName){ openPatient(); } else { show("login"); }
+}
+$("btn-login").onclick=async()=>{
+  $("login-msg").textContent="Signing in…";
+  try{
+    me=await api("/api/auth/login",{method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({userName:$("u").value.trim(),password:$("p").value})});
+    $("login-msg").textContent=""; $("p").value="";
+    openPatient();
+  }catch(e){ $("login-msg").textContent="Sign-in failed: "+String(e.message||e).slice(0,80); }
+};
+
+/* ---------- patient ---------- */
+async function openPatient(){
+  patient=null; draft=null; show("patient");
+  if(!patients.length){ try{ patients=await api("/api/patients"); }catch{ patients=[]; } }
+  renderPatients($("psearch").value);
+}
+$("psearch").addEventListener("input",e=>renderPatients(e.target.value));
+function renderPatients(q){
+  q=(q||"").toLowerCase().trim();
+  const list=patients.filter(p=>!q||p.name.toLowerCase().includes(q)).slice(0,60);
+  $("plist").innerHTML = list.length
+    ? list.map(p=>`<div class="pitem" data-n="${p.patNum}"><span class="nm">${esc(p.name)}</span>
+        <span class="meta">${esc(p.birthdate||"")} · ${esc(p.provider||"")}</span></div>`).join("")
+    : `<div class="muted" style="padding:12px">No matching patients.</div>`;
+  $("plist").querySelectorAll(".pitem").forEach(el=>el.onclick=()=>selectPatient(+el.dataset.n));
+}
+async function selectPatient(patNum){
+  patient=patients.find(p=>p.patNum===patNum);
+  draft=null; dirty=false; $("draftcard").classList.add("hidden"); clearNotice();
+  renderPatBar(); updateDestHint();
+  show("dictate"); checkHealth(); recoverDraft();
+}
+function renderPatBar(){
+  $("patbar-name").textContent=patient?patient.name:"—";
+  const bits=[];
+  if(patient&&patient.birthdate&&patient.birthdate!=="0001-01-01") bits.push("DOB "+patient.birthdate);
+  if(patient&&patient.provider) bits.push(patient.provider);
+  $("patbar-meta").textContent=bits.join(" · ");
+}
+function notice(msg,kind){
+  const n=$("notice"); n.textContent=msg; n.classList.remove("hidden");
+  const map={warn:["#7a5b00","color-mix(in srgb,#b8860b 18%,transparent)"],
+    bad:["#b42318","color-mix(in srgb,#b42318 14%,transparent)"],
+    ok:["#1c7c34","color-mix(in srgb,#1c7c34 16%,transparent)"]};
+  const [fg,bg]=map[kind]||map.warn; n.style.color=fg; n.style.background=bg;
+}
+function clearNotice(){ const n=$("notice"); if(n){ n.classList.add("hidden"); n.textContent=""; } }
+
+//Where each target lands, so the user knows before AND after filing where to look.
+const DEST={
+  "commlog":["the patient’s Communication Log (a dated entry)","Comm Log"],
+  "note-medical":["the patient’s Medical summary note","Pt Notes → “Medical summary”"],
+  "note-treatment":["the patient’s chart note","Pt Notes → “Chart / odontogram note”"],
+  "procedures":["treatment-planned procedures on the chart","Procedures / the tooth chart"],
+};
+function updateDestHint(){ const n=$("dest-hint"); if(!n)return; const d=DEST[target]||DEST.commlog;
+  n.textContent="→ Files to "+d[0]+". Find it later under “"+d[1]+"”."; }
+
+/* ---------- health ---------- */
+//Set from /api/dictation/health, which reports the engine from server configuration.
+let offHost=false,engineReady=false;
+async function checkHealth(){
+  try{
+    const h=await api("/api/dictation/health");
+    if(!["local","service"].includes(h.engine) || h.offHost!==(h.engine==="service")
+      || typeof h.ok!=="boolean" || (h.offHost && !h.host)) throw new Error("Unknown engine status");
+    engineReady=h.ok;
+    offHost=!!h.offHost;
+    $("engine").textContent=offHost
+      ? `Audio is sent to an external transcription service (${h.host}).`
+      : "Audio is transcribed on this server and does not leave it.";
+    $("mic").disabled=!h.ok;
+    if(!h.ok){ notice("Transcription engine offline — try again shortly.","bad"); } else { clearNotice(); }
+  }catch{ engineReady=false; $("engine").textContent="Transcription engine status unavailable."; $("mic").disabled=true; notice("Transcription engine offline — try again shortly.","bad"); }
+}
+
+/* ---------- segmented controls ---------- */
+$("targets").onclick=e=>{const b=e.target.closest(".chip");if(!b)return;
+  target=b.dataset.t; setPressed("targets",b); if(draft)draft.target=target; updateDestHint();};
+function setPressed(group,btn){ $(group).querySelectorAll(".chip").forEach(c=>c.setAttribute("aria-pressed",String(c===btn))); }
+
+/* ---------- record ---------- */
+const fmt=s=>String(Math.floor(s/60)).padStart(2,"0")+":"+String(s%60).padStart(2,"0");
+function pickMime(){
+  const cands=["audio/mp4","audio/webm;codecs=opus","audio/webm","audio/aac","audio/ogg"];
+  if(window.MediaRecorder&&MediaRecorder.isTypeSupported)
+    for(const m of cands) if(MediaRecorder.isTypeSupported(m)) return m;
+  return "";
+}
+$("mic").onclick=async()=>{
+  if(rec&&rec.state==="recording"){ rec.stop(); return; }
+  if(!engineReady){ notice("Check the transcription engine before recording.","warn"); return; }
+  if(!patient){ notice("Pick a patient first.","warn"); return; }
+  if(!window.MediaRecorder){ notice("This browser can’t record audio. Update iOS/Chrome, or use a different device.","bad"); return; }
+  if(!navigator.mediaDevices?.getUserMedia){ notice("Microphone needs a secure page — open this over the https:// tunnel link (not a plain IP).","bad"); return; }
+  try{ stream=await navigator.mediaDevices.getUserMedia({audio:true}); }
+  catch(e){ notice("Microphone blocked. Allow mic access for this site in your browser settings, then tap Record again.","bad"); return; }
+  clearNotice(); chunks=[];
+  const mime=pickMime();
+  try{ rec = mime ? new MediaRecorder(stream,{mimeType:mime}) : new MediaRecorder(stream); }
+  catch(e){ try{ rec=new MediaRecorder(stream); }catch(e2){ notice("Recording isn’t supported on this browser.","bad"); stream.getTracks().forEach(t=>t.stop()); stream=null; return; } }
+  rec.ondataavailable=e=>{ if(e.data&&e.data.size)chunks.push(e.data); };
+  rec.onstop=onStop;
+  try{ rec.start(1000); }catch(e){ try{ rec.start(); }catch(e2){ notice("Could not start recording.","bad"); return; } } // timeslice: iOS flushes data periodically
+  secs=0; $("timer").textContent="00:00"; timer=setInterval(()=>{secs++;$("timer").textContent=fmt(secs);},1000);
+  $("mic").classList.add("recording"); $("mic-label").textContent="Stop"; $("mic").querySelector(".icon").textContent="⏹";
+  $("status").textContent="Recording… tap to stop.";
+};
+async function onStop(){
+  clearInterval(timer);
+  $("mic").classList.remove("recording"); $("mic-label").textContent="Record"; $("mic").querySelector(".icon").textContent="🎙️";
+  if(stream){ stream.getTracks().forEach(t=>t.stop()); stream=null; }
+  const blob=new Blob(chunks,{type:rec?.mimeType||"audio/webm"});
+  if(blob.size<1200){ notice("No audio captured — tap Record, wait a beat, then speak for a couple of seconds.","warn"); $("status").textContent="Ready."; return; }
+  if(!patient){ notice("No active patient — pick one first.","warn"); $("status").textContent="Ready."; return; }
+  $("status").textContent=`Transcribing ${(blob.size/1024|0)} KB ${offHost?"via the external service":"locally"}…`;
+  let resp;
+  try{
+    resp=await fetch(`/api/dictation/transcribe?patNum=${patient.patNum}&task=${mode}&target=${encodeURIComponent(target)}&format=${encodeURIComponent(rec?.mimeType||blob.type||"")}`,
+      {method:"POST",headers:{"Content-Type":"application/octet-stream"},body:blob});
+  }catch(e){ notice("Couldn’t reach the server to send the audio. Check your connection and tap Record to retry.","bad"); $("status").textContent="Ready."; return; }
+  if(resp.status===401){ notice("Your session expired — sign in again, then re-record.","bad"); $("status").textContent="Ready."; me=null; show("login"); return; }
+  let body=null; const ct=resp.headers.get("content-type")||"";
+  if(ct.includes("json")){ try{ body=await resp.json(); }catch{} }
+  else { try{ body={message:await resp.text()}; }catch{} }
+  if(resp.status===422 || (body&&body.reason==="no-speech")){
+    notice((body&&body.message)||"No speech detected — try again, closer to the mic.","warn"); $("status").textContent="Ready."; return;
+  }
+  if(!resp.ok || !body || body.draftId===undefined){
+    notice("Transcription failed"+(body&&body.message?": "+String(body.message).slice(0,80):"")+". Tap Record to try again.","bad");
+    $("status").textContent="Ready."; return;
+  }
+  draft=body; dirty=false; clearNotice(); renderDraft(); $("status").textContent="Done — review and edit below.";
+}
+
+/* ---------- draft ---------- */
+function renderDraft(){
+  const has=!!draft;
+  $("draftcard").classList.toggle("hidden",!has);
+  $("actionbar").classList.toggle("hidden",!has);
+  if(!has) return;
+  const isProc = draft.target==="procedures";
+  $("entries").classList.toggle("hidden",!isProc);
+  $("text").classList.toggle("hidden",isProc);
+  $("count").classList.toggle("hidden",isProc);
+  $("raw").textContent=draft.transcript||"(empty)";
+  if(isProc){ renderEntries(draft.entries||[]); }
+  else { $("text").value=draft.text||""; updateCount(); }
+  const bits=[]; if(draft.task==="translate")bits.push("translated"); if(draft.language)bits.push("heard: "+draft.language);
+  if(draft.duration)bits.push(draft.duration+"s");
+  $("meta").textContent=bits.length?"· "+bits.join(" · "):"";
+}
+function pcardHtml(e){
+  const c=(e&&e.confidence)||"med";
+  return `<div class="pcard">
+    <div class="prow">
+      <input class="pc-code" value="${esc((e&&e.procCode)||"")}" placeholder="code or name" autocapitalize="characters" autocomplete="off">
+      <input class="pc-tooth" value="${esc((e&&e.tooth)||"")}" placeholder="Tooth" inputmode="numeric">
+      <input class="pc-surf" value="${esc((e&&e.surf)||"")}" placeholder="Surf" autocapitalize="characters">
+      <button type="button" class="pc-rm" title="Remove">✕</button>
+    </div>
+    <div class="pc-results hidden"></div>
+    <div class="pc-desc"><span class="conf conf-${c}">${c}</span>${esc((e&&e.descript)||"— search a code or name")}</div>
+  </div>`;
+}
+//Free-text code search on a card: type a CDT code OR a plain name ("crown", "composite")
+//and pick a real match. Same /api/proccodes search the Procedures module uses.
+function wireCard(card){
+  const codeIn=card.querySelector(".pc-code");
+  const results=card.querySelector(".pc-results");
+  const desc=card.querySelector(".pc-desc");
+  let tmr=null;
+  codeIn.addEventListener("input",()=>{
+    clearTimeout(tmr);
+    const q=codeIn.value.trim();
+    if(q.length<2){ results.classList.add("hidden"); results.innerHTML=""; return; }
+    tmr=setTimeout(async()=>{
+      let hits=[]; try{ hits=await api(`/api/proccodes?search=${encodeURIComponent(q)}`); }catch{}
+      if(!hits.length){ results.innerHTML=`<div class="pc-res-empty">No matching codes</div>`; results.classList.remove("hidden"); return; }
+      results.innerHTML=hits.slice(0,12).map(h=>
+        `<div class="pc-res" data-code="${esc(h.procCode)}" data-desc="${esc(h.descript)}"><b>${esc(h.procCode)}</b>${esc(h.descript)}</div>`).join("");
+      results.classList.remove("hidden");
+      results.querySelectorAll(".pc-res").forEach(r=>r.onclick=()=>{
+        codeIn.value=r.dataset.code;
+        desc.innerHTML=`<span class="conf conf-high">picked</span>${esc(r.dataset.code)} — ${esc(r.dataset.desc)}`;
+        results.classList.add("hidden");
+      });
+    },220);
+  });
+  codeIn.addEventListener("blur",()=>{ setTimeout(()=>results.classList.add("hidden"),200); });
+  card.querySelector(".pc-rm").onclick=()=>card.remove();
+}
+function renderEntries(entries){
+  const box=$("entries");
+  const hdr=entries.length
+    ? `Confirm each procedure — type a code or name to search, set tooth/surface, or remove a line. These become treatment-planned procedures.`
+    : `No procedures were recognized. Add them below (type a code or name to search), or re-record one procedure per phrase.`;
+  box.innerHTML=`<div class="ehdr">${hdr}</div>`+entries.map(pcardHtml).join("")+
+    `<button type="button" class="btn ghost" id="pc-add">+ Add procedure</button>`;
+  box.querySelectorAll(".pcard").forEach(wireCard);
+  $("pc-add").onclick=()=>{ $("pc-add").insertAdjacentHTML("beforebegin",pcardHtml(null)); wireCard($("pc-add").previousElementSibling); };
+}
+function gatherEntries(){
+  return [...$("entries").querySelectorAll(".pcard")].map(c=>({
+    procCode:c.querySelector(".pc-code").value.trim().toUpperCase(),
+    tooth:c.querySelector(".pc-tooth").value.trim(),
+    surf:c.querySelector(".pc-surf").value.trim().toUpperCase(),
+  })).filter(e=>e.procCode);
+}
+$("text").addEventListener("input",()=>{ updateCount(); dirty=true; clearTimeout(saveTimer); saveTimer=setTimeout(saveEdits,700); });
+function updateCount(){ $("count").textContent=($("text").value.length)+" chars"+(dirty?" · saving…":" · saved"); }
+async function saveEdits(){
+  if(!draft)return;
+  try{ await api(`/api/dictation/drafts/${draft.draftId}`,{method:"PUT",headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({text:$("text").value})}); draft.text=$("text").value; dirty=false; updateCount(); }
+  catch{ $("count").textContent="save failed"; }
+}
+async function recoverDraft(){
+  try{ const list=await api(`/api/dictation/drafts?patNum=${patient.patNum}`);
+    if(list&&list.length){ draft=list[0]; dirty=false; target=draft.target||"commlog";
+      setPressed("targets",[...$("targets").children].find(c=>c.dataset.t===target)||$("targets").children[0]);
+      updateDestHint(); renderDraft(); $("status").textContent="Recovered an open draft."; } }catch{}
+}
+$("accept").onclick=async()=>{
+  if(!draft)return;
+  let payload;
+  if(target==="procedures"){
+    const entries=gatherEntries();
+    if(!entries.length){ notice("Nothing to file — add at least one procedure code.","warn"); return; }
+    payload={target,entries};
+  } else {
+    const text=$("text").value.trim();
+    if(!text){ notice("Nothing to accept — the note is empty.","warn"); return; }
+    payload={text,target};
+  }
+  $("accept").disabled=true;
+  try{
+    const r=await api(`/api/dictation/drafts/${draft.draftId}/accept`,{method:"POST",
+      headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)});
+    draft=null; dirty=false; renderDraft();
+    const d=DEST[target]||DEST.commlog;
+    notice(`✓ Filed ${esc(r.reference||("to "+d[0]))}. Find it under “${d[1]}” for ${esc(patient?patient.name:"this patient")}.`,"ok");
+    $("status").textContent="";
+  }catch(e){ notice("Couldn’t file: "+String(e.message||e).slice(0,90)+". Tap Accept to try again.","bad"); }
+  finally{ $("accept").disabled=false; }
+};
+$("discard").onclick=async()=>{
+  if(!draft)return;
+  if(!confirm("Discard this dictation? The transcript and edits are permanently deleted and nothing is filed."))return;
+  try{ await api(`/api/dictation/drafts/${draft.draftId}`,{method:"DELETE"}); }catch{}
+  draft=null; dirty=false; renderDraft(); $("status").textContent="Discarded.";
+};
+$("patbar-change").onclick=()=>openPatient();
+$("who").onclick=async()=>{
+  if(!me)return;
+  if(draft&&dirty&&!confirm("You have unsaved dictation. Sign out anyway?"))return;
+  else if(!(draft&&dirty)&&!confirm("Sign out?"))return;
+  try{ await api("/api/auth/logout",{method:"POST"}); }catch{}
+  me=null; patient=null; draft=null; dirty=false; patients=[];
+  $("u").value=""; $("p").value=""; clearNotice();
+  show("login");
+};
+window.addEventListener("beforeunload",e=>{ if(draft&&dirty){ e.preventDefault(); e.returnValue=""; } });
+
+boot();
+</script>
+</body>
+</html>

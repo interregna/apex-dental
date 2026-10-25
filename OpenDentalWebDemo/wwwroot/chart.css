@@ -1,0 +1,83 @@
+/* Interactive tooth-chart styling (chart-render.js).
+   The clinical chart always renders on a light "paper" canvas in BOTH themes —
+   like every dental PMS — so the standard restoration colors (blue = completed,
+   red = planned, green = existing) read clearly instead of blue-on-black. */
+:root, :root[data-theme="dark"]{
+  --perio-healthy:#3f4854; --perio-caution:#c77a00; --perio-serious:#a5093b;
+  --odc-ink:#1f2733; --odc-mut:#6b7480; --odc-line:#c9d0d8; --odc-faint:#e7ebef;
+  --odc-tooth:#fbfcfd; --odc-surface:#ffffff;
+}
+
+.odc-host{display:block}
+.odc-svg{max-width:100%;background:var(--odc-surface);border:1px solid var(--odc-faint);border-radius:8px}
+.odc-scroll{overflow-x:auto;border-radius:8px}
+.odc-perio{min-width:620px}
+
+/* odontogram */
+.odc-tooth{fill:var(--odc-tooth);stroke:var(--odc-line);stroke-width:1}
+.odc-miss{fill:var(--odc-faint);stroke:var(--odc-line)}
+.odc-miss-x{stroke:var(--odc-mut);stroke-width:1.5}
+.odc-div{stroke:var(--odc-faint);stroke-width:.8}
+.odc-div-c{fill:none;stroke:var(--odc-faint);stroke-width:.8}
+.odc-surf{stroke:none}
+/* hover affordance — every tooth/site is interactive (details on mouseover) */
+.odc-hit{cursor:pointer}
+.odc-hit:hover{fill:color-mix(in srgb,var(--teal) 14%,transparent);stroke:var(--teal);stroke-width:1.5}
+.odc-num{fill:var(--odc-ink);font-size:11px;font-weight:600}
+.odc-num-miss{fill:var(--odc-mut);font-weight:400}
+.odc-arch{fill:var(--odc-mut);font-size:11px;font-weight:600;letter-spacing:.04em;text-transform:uppercase}
+
+/* perio */
+.odc-cej{stroke:var(--odc-mut);stroke-width:1;stroke-dasharray:none}
+.odc-ruler{stroke:var(--odc-faint);stroke-width:1}
+.odc-col{stroke:var(--odc-faint);stroke-width:1}
+.odc-axis{fill:var(--odc-mut);font-size:9px;font-weight:600}
+.odc-axis-sm{fill:var(--odc-mut);font-size:7.5px}
+.odc-pdnum{font-size:9px;font-weight:700}
+.odc-gmnum{fill:var(--odc-mut);font-size:8px}
+.odc-mob{fill:var(--odc-ink);font-size:9px;font-weight:600}
+.odc-fur{fill:none;stroke:var(--perio-caution);stroke-width:1.2}
+.odc-fur-hi{fill:var(--perio-serious);stroke:var(--perio-serious)}
+.odc-fur-t{fill:var(--odc-mut);font-size:7px}
+.odc-pdline{fill:none;stroke:var(--perio-serious);stroke-width:1.4}
+.odc-gmline{fill:none;stroke:#2563a6;stroke-width:1.4}
+.odc-bop{fill:#d61f2b;stroke:#fff;stroke-width:.5}
+.odc-pkt{fill:var(--perio-healthy);opacity:.18}
+.odc-pkt-md{fill:var(--perio-caution);opacity:.30}
+.odc-pkt-hi{fill:var(--perio-serious);opacity:.34}
+.odc-exambar{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.odc-examsel{font-size:12px;padding:3px 6px;border:1px solid var(--odc-line);border-radius:6px;background:var(--odc-surface);color:var(--odc-ink)}
+
+/* legend */
+.odc-key{display:flex;flex-wrap:wrap;gap:22px;margin-top:12px;padding:12px 14px;
+  background:var(--odc-surface);border:1px solid var(--odc-faint);border-radius:8px;font-size:12px}
+.odc-key-group{min-width:120px}
+.odc-key-group h4{margin:0 0 6px;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--odc-mut);font-weight:700}
+.odc-key-item{display:flex;align-items:center;gap:7px;margin:4px 0;color:var(--odc-ink)}
+.odc-key-sw{flex:none}
+.odc-chip{display:inline-block;min-width:20px;padding:1px 5px;border-radius:5px;color:#fff;font-size:10px;
+  font-weight:700;text-align:center;line-height:1.5}
+.odc-swz{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:4px;
+  color:#fff;font-size:10px;font-weight:700}
+.odc-sw-healthy{background:var(--perio-healthy)} .odc-sw-caution{background:var(--perio-caution)} .odc-sw-serious{background:var(--perio-serious)}
+.odc-map-l{fill:var(--odc-mut);font-size:11px;font-weight:600}
+.odc-key-note{font-size:11px;line-height:1.5;color:var(--odc-mut);max-width:340px}
+.odc-empty{margin-top:10px;padding:14px;border:1px dashed var(--odc-line);border-radius:8px;color:var(--odc-mut);font-size:13px}
+
+/* tooltip */
+.odc-tip{position:fixed;z-index:1000;pointer-events:none;max-width:280px;
+  background:#0f1620;color:#eef2f6;border:1px solid #2b3542;border-radius:8px;
+  padding:8px 10px;font-size:12px;line-height:1.45;box-shadow:0 8px 24px rgba(0,0,0,.4)}
+.odc-tip-h{font-weight:700;margin-bottom:4px;border-bottom:1px solid #2b3542;padding-bottom:4px}
+.odc-tip-row{margin:2px 0}
+.odc-tip-sub{color:#9aa4b0;font-size:11px}
+
+/* chart mode toolbar additions */
+.chart-numtoggle{display:inline-flex;border:1px solid var(--odc-line);border-radius:7px;overflow:hidden}
+.chart-numtoggle button{border:none;background:transparent;padding:3px 9px;font-size:12px;cursor:pointer;color:var(--odc-mut)}
+.chart-numtoggle button[aria-pressed="true"]{background:var(--odc-ink);color:var(--odc-surface)}
+
+/* ---------- Chart window: the Procedures pane fills the window height ----------
+   A viewport-relative cap so the list uses the whole window (scrolling inside)
+   instead of the fixed 430px, without letting the 300-row table expand the page. */
+#mod-chart .card .scrolly{max-height:calc(100vh - 240px)}

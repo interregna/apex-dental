@@ -1,0 +1,7 @@
+# Preserve inherited source bytes; classify binary assets explicitly.
+* -text
+*.png binary
+*.jpg binary
+*.gif binary
+*.ico binary
+*.pdf binary

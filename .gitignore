@@ -1,0 +1,29 @@
+# External inputs, generated files, and local configuration are not source.
+/Required dlls/
+**/bin/
+**/obj/
+artifacts/
+.venv/
+__pycache__/
+.pytest_cache/
+.DS_Store
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+*.pfx
+*.p12
+*.db
+*.sqlite*
+*.bak
+*.dump
+*.log
+*credential*.json
+*credential*.txt
+*secret*.json
+*secret*.txt
+*login*.txt
+private/
+secrets/
+.aws/

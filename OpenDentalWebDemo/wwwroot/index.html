@@ -1,0 +1,274 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Apex Dental — Community Preview</title>
+<link rel="stylesheet" href="app.css?v=15">
+<link rel="stylesheet" href="chart.css?v=15">
+</head>
+<body>
+
+<nav class="rail" aria-label="Modules">
+  <div class="brand" aria-label="Practice chart"><span class="brand-mark">🦷</span></div>
+  <button data-mod="appts" aria-current="true">
+    <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>
+    Appts</button>
+  <button data-mod="family">
+    <svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"/><circle cx="16.5" cy="10" r="2.4"/><path d="M3.5 20c0-3 2.5-5 5.5-5s5.5 2 5.5 5M13.5 20c.2-2.4 1.6-4 3.5-4s3.3 1.6 3.5 4"/></svg>
+    Family</button>
+  <button data-mod="account">
+    <svg viewBox="0 0 24 24"><path d="M4 6h16v12H4zM4 10h16M8 14h4"/></svg>
+    Account</button>
+  <button data-mod="chart">
+    <svg viewBox="0 0 24 24"><path d="M7 3c-2 0-3.5 1.8-3.5 4.2 0 4.3 2 9.6 3.6 12.3.5.9 1.8.7 2-.3l.9-4.4c.2-1 1.7-1 1.9 0l.9 4.4c.2 1 1.5 1.2 2 .3 1.6-2.7 3.6-8 3.6-12.3C18.5 4.8 17 3 15 3c-1.6 0-2.4 1-4 1s-2.4-1-4-1z" transform="translate(1)"/></svg>
+    Chart</button>
+  <button data-mod="images">
+    <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M3 17l5-4 3 2 5-4 5 4"/></svg>
+    Images</button>
+  <button data-mod="reports">
+    <svg viewBox="0 0 24 24"><path d="M4 20V9M10 20V4M16 20v-7M22 20H2"/></svg>
+    Reports</button>
+  <button data-mod="sign">
+    <svg viewBox="0 0 24 24"><path d="M3 17c3-6 5-8 6.5-6.5S9 15 11 15s3.5-5 5-5 2 3 5 3M3 21h18"/></svg>
+    Sign</button>
+  <div class="spacer"></div>
+</nav>
+
+<header class="band">
+  <div class="who">
+    <span class="name" id="band-name">—</span>
+    <span class="meta" id="band-meta"></span>
+    <span class="chip" id="band-prov" hidden></span>
+  </div>
+  <div class="patsearch" id="patsearch">
+    <input id="band-search" type="text" placeholder="Search patient…" autocomplete="off"
+      aria-label="Search patient" role="combobox" aria-expanded="false" aria-controls="band-results" aria-autocomplete="list">
+    <ul id="band-results" class="patresults" role="listbox" hidden></ul>
+  </div>
+  <button class="cmdk-btn" id="cmdk-btn" title="Command palette (⌘K / Ctrl-K)" aria-label="Command palette">
+    <span>Go to…</span><kbd>⌘K</kbd></button>
+  <div class="gap"></div>
+  <label class="rolepick" title="Workspace / role"><span class="sr-only">Workspace</span>
+    <select id="role-select" aria-label="Workspace role"></select></label>
+  <button class="quiet" id="undo-btn" hidden title="Undo last charting action (⌘Z)">↶ Undo <span class="undo-label" style="opacity:.7"></span></button>
+  <span class="band-user" id="band-user" hidden></span>
+  <button class="quiet" id="logout-btn" title="Sign out" hidden>Sign out</button>
+  <span class="conn" id="conn"><span class="dot"></span><span id="conn-text">connecting…</span></span>
+  <button class="quiet theme" id="theme-btn" title="Cycle light / dark / auto">◐ auto</button>
+</header>
+
+<!-- Login screen (server-enforced; shown until /api/auth/me resolves a session) -->
+<div class="login" id="login" role="dialog" aria-modal="true" aria-label="Sign in">
+  <form class="login-card" id="login-form">
+    <div class="login-brand"><span class="brand-mark">🦷</span></div>
+    <h2>Sign in</h2>
+    <label>Username<input id="login-user" type="text" autocomplete="username" autofocus></label>
+    <label>Password<input id="login-pass" type="password" autocomplete="current-password"></label>
+    <div class="login-err" id="login-err" role="alert"></div>
+    <button type="submit" class="primary">Sign in</button>
+    <div class="login-hint">Sign in with your practice account. Ask your administrator for access.</div>
+  </form>
+</div>
+
+<!-- ⌘K command palette: keyboard-first jump to any module or patient -->
+<div class="cmdk" id="cmdk" role="dialog" aria-modal="true" aria-label="Command palette">
+  <div class="cmdk-box">
+    <input id="cmdk-input" type="text" placeholder="Jump to a screen or patient…" autocomplete="off"
+      role="combobox" aria-expanded="true" aria-controls="cmdk-list" aria-autocomplete="list">
+    <ul id="cmdk-list" class="cmdk-list" role="listbox"></ul>
+    <div class="cmdk-foot"><kbd>↑</kbd><kbd>↓</kbd> move · <kbd>↵</kbd> open · <kbd>esc</kbd> close</div>
+  </div>
+</div>
+
+<main>
+
+<!-- ================= Appointments ================= -->
+<section class="module active" id="mod-appts">
+  <div class="mod-head"><h1>Appointment book</h1>
+    <span class="sub">day view · provider columns · times in 10-minute rows</span></div>
+  <form class="row" id="sched-controls" style="margin-bottom:12px">
+    <input type="date" id="sched-date" aria-label="Day">
+    <button type="button" class="quiet" id="sched-prev" aria-label="Previous day">‹</button>
+    <button type="button" class="quiet" id="sched-today">Today</button>
+    <button type="button" class="quiet" id="sched-next" aria-label="Next day">›</button>
+    <span class="msg" id="sched-msg"></span>
+  </form>
+  <div class="book" id="book" aria-label="Appointment book grid"></div>
+  <div class="card" style="margin-top:14px;max-width:640px">
+    <h2>Book appointment</h2>
+    <form class="row" id="appt-new">
+      <select id="appt-pat" aria-label="Patient"></select>
+      <input type="time" id="appt-time" value="09:00" step="600">
+      <input type="number" id="appt-min" value="30" min="10" step="10" style="width:64px" aria-label="Minutes"> min
+      <button class="action">Book appointment</button>
+      <span class="msg" id="appt-msg"></span>
+    </form>
+  </div>
+</section>
+
+<!-- ================= Family ================= -->
+<section class="module" id="mod-family">
+  <div class="mod-head"><h1>Family</h1><span class="sub">patients and demographics</span></div>
+  <div class="cols c2">
+    <div class="card">
+      <h2>Patients</h2>
+      <form class="row" id="pat-add" style="margin-bottom:8px">
+        <input name="lname" placeholder="Last name" required style="width:90px">
+        <input name="fname" placeholder="First" required style="width:80px">
+        <input name="bd" type="date" aria-label="Birthdate">
+        <button class="action">Add patient</button>
+      </form>
+      <div class="gridwrap scrolly"><table class="grid" id="pat-list">
+        <thead><tr><th>#</th><th>Name</th><th>Birthdate</th><th>Prov</th></tr></thead><tbody></tbody>
+      </table></div>
+    </div>
+    <div class="card">
+      <h2>Edit patient <span class="msg" id="edit-msg"></span></h2>
+      <form id="pat-edit" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;max-width:560px">
+        <input name="lName" placeholder="Last name"><input name="fName" placeholder="First name">
+        <input name="preferred" placeholder="Preferred"><input name="birthdate" type="date" aria-label="Birthdate">
+        <input name="hmPhone" placeholder="Home phone"><input name="wirelessPhone" placeholder="Cell phone">
+        <input name="email" placeholder="Email" style="grid-column:1/-1">
+        <input name="address" placeholder="Address" style="grid-column:1/-1">
+        <input name="city" placeholder="City"><input name="state" placeholder="State" maxlength="2">
+        <input name="zip" placeholder="Zip"><button class="action">Save changes</button>
+      </form>
+    </div>
+  </div>
+  <div class="cols c2" style="margin-top:14px">
+    <div class="card">
+      <h2>Family members <span class="msg" id="fam-msg"></span></h2>
+      <div class="gridwrap scrolly"><table class="grid" id="fam-list">
+        <thead><tr><th>#</th><th>Name</th><th>Position</th><th>Age</th><th>Gender</th><th>Status</th><th>Birthdate</th></tr></thead><tbody></tbody>
+      </table></div>
+      <div class="msg" id="fam-guar" style="margin-top:6px"></div>
+      <form class="row" id="fam-add" style="margin-top:10px">
+        <input name="fname" placeholder="First name" required style="width:90px">
+        <input name="lname" placeholder="Last (blank = family name)" style="width:170px">
+        <input name="bd" type="date" aria-label="Birthdate">
+        <select name="position" aria-label="Position"><option>Single</option><option>Married</option><option>Child</option><option>Widowed</option><option>Divorced</option></select>
+        <button class="action">Add to family</button>
+        <span class="msg" id="fam-add-msg"></span>
+      </form>
+    </div>
+    <div class="card">
+      <h2>Move patient to another family</h2>
+      <form class="row" id="fam-move">
+        <select id="fam-move-pat" aria-label="Patient to move"></select>
+        <span class="msg">joins family of</span>
+        <select id="fam-move-target" aria-label="Target family"></select>
+        <button class="action">Move</button>
+        <span class="msg" id="fam-move-msg"></span>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- ================= Account ================= -->
+<section class="module" id="mod-account">
+  <div class="mod-head"><h1>Account</h1><span class="sub">ledger and statements</span></div>
+  <div class="stats">
+    <div class="stat pending" id="ag-030"><div class="k">0–30</div><div class="v">—</div></div>
+    <div class="stat pending" id="ag-3160"><div class="k">31–60</div><div class="v">—</div></div>
+    <div class="stat pending" id="ag-6190"><div class="k">61–90</div><div class="v">—</div></div>
+    <div class="stat pending" id="ag-90"><div class="k">90+</div><div class="v">—</div></div>
+    <div class="stat pending" id="ag-bal"><div class="k">Balance</div><div class="v">—</div></div>
+  </div>
+  <div class="card" style="margin-bottom:14px">
+    <h2>Ledger (newest first) <span class="msg" id="led-msg"></span></h2>
+    <div class="msg" id="led-line" style="margin-bottom:6px"></div>
+    <div class="gridwrap scrolly"><table class="grid" id="led-list">
+      <thead><tr><th>Date</th><th>Type</th><th>Description</th><th>Prov</th><th>Status</th><th>Charge</th><th>Credit</th></tr></thead><tbody></tbody>
+    </table></div>
+  </div>
+  <div class="card" style="max-width:640px">
+    <h2>Enter payment</h2>
+    <form class="row" id="pay-form">
+      <input id="pay-amt" type="number" step="0.01" min="0.01" placeholder="Amount" required style="width:110px" aria-label="Amount">
+      <input id="pay-note" placeholder="Note">
+      <button class="action">Post payment</button>
+      <span class="msg" id="pay-msg"></span>
+    </form>
+  </div>
+</section>
+
+<!-- ================= Chart ================= -->
+<section class="module" id="mod-chart">
+  <div class="mod-head"><h1>Chart</h1><span class="sub">interactive odontogram &amp; perio chart — standardized key, hover for detail</span></div>
+  <div class="cols c2r">
+    <div>
+      <div class="chart-tools">
+        <div class="seg" role="group" aria-label="Chart mode">
+          <button id="chart-normal" aria-pressed="true">Restorative</button>
+          <button id="chart-perio" aria-pressed="false">Perio</button>
+        </div>
+        <div class="chart-numtoggle" role="group" aria-label="Tooth numbering">
+          <button id="chart-num-univ" aria-pressed="true" title="Universal 1–32">1–32</button>
+          <button id="chart-num-fdi" aria-pressed="false" title="FDI / ISO 3950">FDI</button>
+        </div>
+        <button class="quiet" id="chart-reload">Refresh</button>
+        <button class="quiet" id="chart-seed">Seed demo clinical data</button>
+        <span class="msg" id="chart-msg"></span>
+      </div>
+      <div id="chart-canvas" class="odc-host"></div>
+    </div>
+    <div class="card">
+      <h2>Procedures</h2>
+      <div class="gridwrap scrolly"><table class="grid" id="chart-procs">
+        <thead><tr><th>Th</th><th>Surf</th><th>Code</th><th>Status</th><th>Description</th></tr></thead><tbody></tbody>
+      </table></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= Images ================= -->
+<section class="module" id="mod-images">
+  <div class="mod-head"><h1>Images</h1><span class="sub">scan via eSCL/SANE, or upload</span></div>
+  <div class="card" style="margin-bottom:14px;max-width:720px">
+    <h2>Acquire</h2>
+    <form class="row" id="scan-form">
+      <select id="scan-src" aria-label="Scanner"></select>
+      <button class="action">Scan</button>
+      <button type="button" class="quiet" id="up-btn">Upload file…</button>
+      <input id="up-file" type="file" hidden>
+      <span class="msg" id="scan-msg"></span>
+    </form>
+  </div>
+  <div class="card"><h2>Documents</h2>
+  <div class="gridwrap scrolly"><table class="grid" id="doc-list">
+    <thead><tr><th>#</th><th>File</th><th>Type</th><th>Created</th><th></th></tr></thead><tbody></tbody>
+  </table></div></div>
+</section>
+
+<!-- ================= Reports ================= -->
+<section class="module" id="mod-reports">
+  <div class="mod-head"><h1>Reports</h1><span class="sub">generic runner over the Rp* report classes</span></div>
+  <form class="row" id="rep-form" style="margin-bottom:12px">
+    <select id="rep-sel" aria-label="Report"></select>
+    <input type="date" id="rep-from" aria-label="From"> – <input type="date" id="rep-to" aria-label="To">
+    <button class="action">Run report</button>
+    <span class="msg" id="rep-msg"></span>
+  </form>
+  <div class="card"><div class="gridwrap scrolly" style="max-height:560px"><table class="grid" id="rep-table"><thead></thead><tbody></tbody></table></div></div>
+</section>
+
+<!-- ================= Sign ================= -->
+<section class="module" id="mod-sign">
+  <div class="mod-head"><h1>Sign</h1><span class="sub">extraction consent, signed in the browser</span></div>
+  <div class="card" style="max-width:520px">
+    <h2>Signature</h2>
+    <canvas class="sig" id="sig-pad" width="440" height="130"></canvas>
+    <form class="row" id="sig-form" style="margin-top:10px">
+      <button class="action">Sign consent &amp; create PDF</button>
+      <button type="button" class="quiet" id="sig-clear">Clear</button>
+      <span class="msg" id="sig-msg"></span>
+    </form>
+  </div>
+</section>
+
+</main>
+<script src="app.js?v=15"></script>
+<script src="chart-render.js?v=15"></script>
+</body>
+</html>

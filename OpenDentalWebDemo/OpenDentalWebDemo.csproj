@@ -1,0 +1,27 @@
+<!-- Modified for the Apex Dental public source snapshot, 2026-10-24; see NOTICE. -->
+<Project Sdk="Microsoft.NET.Sdk.Web">
+  <!-- Demo web UI over the headless Linux core. Run inside the VM:
+       dotnet run - -urls http://0.0.0.0:5080 (see FORMS-INVENTORY.md). -->
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>disable</Nullable>
+    <WarningLevel>0</WarningLevel>
+    <NoWarn>NU1701</NoWarn>
+    <AssemblyName>OpenDentalWebDemo</AssemblyName>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../OpenDentBusinessCore/OpenDentBusinessCore.csproj" />
+    <!-- Compile-time ref for signature crypto; runtime copy comes via the core project. -->
+    <Reference Include="../Required dlls/ODCrypt.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <!-- GDI on Linux via libgdiplus (signature rendering, sheet text metrics). -->
+    <RuntimeHostConfigurationOption Include="System.Drawing.EnableUnixSupport" Value="true" />
+  </ItemGroup>
+  <ItemGroup>
+    <!-- The service runs from the build output dir (read-only repo mount), so the
+         workstation UI must be copied there rather than served from the project root. -->
+    <Content Update="wwwroot/**" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,19 @@
+# Local Whisper dictation sidecar for the Open Dental web demo (loopback only).
+# Install: sudo cp odwhisper.service /etc/systemd/system/ (edit User/paths),
+#          sudo systemctl daemon-reload && sudo systemctl enable --now odwhisper
+[Unit]
+Description=Open Dental local Whisper dictation sidecar (loopback only)
+After=network.target
+
+[Service]
+Type=simple
+User=CHANGEME
+Environment=WHISPER_MODEL=base
+Environment=WHISPER_COMPUTE=int8
+Environment=WHISPER_PORT=8771
+ExecStart=%h/whisper-venv/bin/python %h/whisper_sidecar.py
+Restart=on-failure
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Console harness proving the headless Linux core against a live MariaDB.
+       Run inside the VM: dotnet run - -server 127.0.0.1 (see RUNNING-LINUX-VM.md). -->
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>disable</Nullable>
+    <WarningLevel>0</WarningLevel>
+    <NoWarn>NU1701</NoWarn>
+    <AssemblyName>ODCoreHarness</AssemblyName>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../OpenDentBusinessCore.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <!-- Lets System.Drawing.Common 6.0 use libgdiplus on Linux (fonts, bitmaps,
+         text metrics). Must be set on the executable project; requires
+         apt install libgdiplus fontconfig fonts-liberation in the VM. -->
+    <RuntimeHostConfigurationOption Include="System.Drawing.EnableUnixSupport" Value="true" />
+  </ItemGroup>
+</Project>

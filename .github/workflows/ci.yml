@@ -1,0 +1,22 @@
+name: Public source checks
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  publication:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: python3 -m unittest discover -s tools/publication -p 'test_*.py'
+      - run: python3 tools/publication/check_boundary.py
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+      - run: python3 tools/restore_dependencies.py
+      - run: dotnet build OpenDentalWebDemo/OpenDentalWebDemo.csproj -c Release --nologo
+      - run: dotnet build OpenDentBusinessCore/Harness/Harness.csproj -c Release --nologo
+      - run: dotnet run --project tools/tests/TranscriptionContract -c Release

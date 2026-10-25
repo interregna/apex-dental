@@ -1,0 +1,33 @@
+<Project>
+  <!-- Files with genuine Windows/UI dependencies, removed from the Linux core build. -->
+  <ItemGroup>
+    <Compile Remove="../CodeBase/Controls/MessageBox.cs" />
+    <Compile Remove="../CodeBase/Controls/ODWebView2.cs" />
+    <Compile Remove="../CodeBase/Controls/ODWebView2.Designer.cs" />
+    <Compile Remove="../CodeBase/Controls/OpenGLWinFormsControl.cs" />
+    <Compile Remove="../CodeBase/Controls/PrintPanel.cs" />
+    <Compile Remove="../CodeBase/Controls/PrintPanel.Designer.cs" />
+    <Compile Remove="../CodeBase/Progress/FormProgressBase.cs" />
+    <Compile Remove="../CodeBase/Progress/FormProgressExtended.cs" />
+    <Compile Remove="../CodeBase/Progress/FormProgressExtended.designer.cs" />
+    <Compile Remove="../CodeBase/Progress/FormProgressStatus.cs" />
+    <Compile Remove="../CodeBase/Progress/FormProgressStatus.designer.cs" />
+    <Compile Remove="../CodeBase/Progress/ODProgress.cs" />
+    <Compile Remove="../CodeBase/Progress/ODProgressBar.cs" />
+    <Compile Remove="../CodeBase/Progress/ODProgressBar.designer.cs" />
+    <Compile Remove="../CodeBase/Progress/ODProgressExtended.cs" />
+    <Compile Remove="../CodeBase/Utilities/MsgBoxCopyPaste.cs" />
+    <Compile Remove="../OpenDentBusiness/Db Multi Table/DashboardQueries.cs" />
+    <Compile Remove="../OpenDentBusiness/UI/GridColumn.cs" />
+    <Compile Remove="../OpenDentBusiness/UI/GridOD.cs" />
+    <Compile Remove="../OpenDentBusiness/UI/GridOld.cs" />
+    <Compile Remove="../OpenDentBusiness/UI/ListGridColumns.cs" />
+    <Compile Remove="../OpenDentBusiness/UI/ODGridPageNav.cs" />
+    <Compile Remove="../OpenDentBusiness/UI/PopupHelper.cs" />
+    <Compile Remove="../OpenDentBusiness/UI/SignatureBox.cs" />
+    <Compile Remove="../OpenDentBusiness/UI/SignatureBox.Designer.cs" />
+    <Compile Remove="../OpenDentBusiness/UI/SignatureBoxWrapper.cs" />
+    <Compile Remove="../OpenDentBusiness/UI/SignatureBoxWrapper.Designer.cs" />
+    <Compile Remove="../OpenDentBusiness/UI/TopazWrapper.cs" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,158 @@
+<!-- Modified for the Apex Dental public source snapshot, 2026-10-24; see NOTICE. -->
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Headless Linux port of the Open Dental business layer.
+       Compiles the unmodified upstream sources from CodeBase, DataConnectionBase,
+       and OpenDentBusiness on cross-platform .NET 8. Windows-only files are
+       removed via Excluded.items; shallow WinForms symbols are satisfied by
+       Shims/. See RUNNING-LINUX-VM.md and OPTION-C-INVESTIGATION.md. -->
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <LangVersion>latest</LangVersion>
+    <Nullable>disable</Nullable>
+    <WarningLevel>0</WarningLevel>
+    <NoWarn>CS0618;CS0612;CS1701;NU1701;MSB3277</NoWarn>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <!-- Assembly identity must match upstream: several prebuilt DLLs in "Required dlls/"
+         expose types from "OpenDentBusiness, Version=24.3.63.0" in their signatures, and
+         the compiler unifies those references with this compilation only if the name and
+         version line up. -->
+    <AssemblyName>OpenDentBusiness</AssemblyName>
+    <AssemblyVersion>24.3.63.0</AssemblyVersion>
+    <RootNamespace>OpenDentBusiness</RootNamespace>
+  </PropertyGroup>
+  <PropertyGroup>
+    <!-- Required to compile the resx (which holds binary entries) on .NET SDK/Linux. -->
+    <GenerateResourceUsePreserializedResources>true</GenerateResourceUsePreserializedResources>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="Shims/**/*.cs" />
+    <Compile Include="../OpenDentBusiness/Properties/Resources.Designer.cs" />
+    <Compile Include="../OpenDentBusiness/Properties/Settings.Designer.cs" />
+    <!-- Internal sheet defs (statements, Rx, consent forms...) live in this resx. -->
+    <EmbeddedResource Include="../OpenDentBusiness/Properties/Resources.resx">
+      <LogicalName>OpenDentBusiness.Properties.Resources.resources</LogicalName>
+    </EmbeddedResource>
+    <!-- Projected tooth anatomy outlines (see Tools/project_tooth_meshes.py). -->
+    <EmbeddedResource Include="Shims/ToothChartPort/ToothAnatomy.json">
+      <LogicalName>OpenDentBusinessCore.ToothAnatomy.json</LogicalName>
+    </EmbeddedResource>
+  </ItemGroup>
+  <Import Project="Sources.items" />
+  <Import Project="Excluded.items" />
+  <ItemGroup>
+    <PackageReference Include="MySqlConnector" Version="2.3.7" />
+    <PackageReference Include="System.Configuration.ConfigurationManager" Version="8.0.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="System.Drawing.Common" Version="6.0.0" />
+    <PackageReference Include="PDFsharp" Version="6.1.1" />
+    <PackageReference Include="System.Management" Version="8.0.0" />
+    <PackageReference Include="System.DirectoryServices" Version="8.0.0" />
+    <PackageReference Include="System.ServiceProcess.ServiceController" Version="8.0.0" />
+    <PackageReference Include="System.Data.Odbc" Version="8.0.0" />
+    <PackageReference Include="Microsoft.VisualBasic" Version="10.3.0" />
+    <PackageReference Include="MailKit" Version="4.16.0" />
+    <PackageReference Include="System.ServiceModel.Primitives" Version="8.0.0" />
+    <PackageReference Include="System.ServiceModel.Http" Version="8.0.0" />
+    <PackageReference Include="System.Resources.Extensions" Version="8.0.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <!-- Exclude DLLs whose simple names collide with NuGet packages or the .NET 8
+         runtime: a duplicate simple name in the trusted-assembly list makes CoreCLR
+         fail at startup with 0x80070057. The NuGet/runtime versions win. -->
+    <Reference Include="../Required dlls/AxInterop.AcroPDFLib.dll" />
+    <Reference Include="../Required dlls/AxInterop.WMPLib.dll" />
+    <Reference Include="../Required dlls/Bridges.dll" />
+    <Reference Include="../Required dlls/CDT.dll" />
+    <Reference Include="../Required dlls/Dicom.Core.dll" />
+    <Reference Include="../Required dlls/Dicom.Native.dll" />
+    <Reference Include="../Required dlls/DiffieHellman.dll" />
+    <Reference Include="../Required dlls/DpsPos.dll" />
+    <Reference Include="../Required dlls/EZT4Jpeg.dll" />
+    <Reference Include="../Required dlls/EZT4Pdf.dll" />
+    <Reference Include="../Required dlls/Eztwain4.dll" />
+    <Reference Include="../Required dlls/Health.Direct.Agent.dll" />
+    <Reference Include="../Required dlls/Health.Direct.Common.dll" />
+    <Reference Include="../Required dlls/Health.Direct.ResolverPlugins.dll" />
+    <Reference Include="../Required dlls/Hunspellx64.dll" />
+    <Reference Include="../Required dlls/Hunspellx86.dll" />
+    <Reference Include="../Required dlls/ImagingDeviceManager.dll" />
+    <Reference Include="../Required dlls/Interop.AFORMAUTLib.dll" />
+    <Reference Include="../Required dlls/Interop.AcroPDFLib.dll" />
+    <Reference Include="../Required dlls/Interop.Acrobat.dll" />
+    <Reference Include="../Required dlls/Interop.CDRDATALib.dll" />
+    <Reference Include="../Required dlls/Interop.CDRDicom.dll" />
+    <Reference Include="../Required dlls/Interop.Microsoft.Office.Core.dll" />
+    <Reference Include="../Required dlls/Interop.QBFC10.dll" />
+    <Reference Include="../Required dlls/Interop.VBIDE.dll" />
+    <Reference Include="../Required dlls/Interop.WMPLib.dll" />
+    <Reference Include="../Required dlls/Interop.Word.dll" />
+    <Reference Include="../Required dlls/Ionic.Zip.dll" />
+    <Reference Include="../Required dlls/MSVCR71.dll" />
+    <Reference Include="../Required dlls/MediaFoundation.Extension.dll" />
+    <Reference Include="../Required dlls/MediaFoundation.dll" />
+    <Reference Include="../Required dlls/Microsoft.DirectX.Direct3D.dll" />
+    <Reference Include="../Required dlls/Microsoft.DirectX.Direct3DX.dll" />
+    <Reference Include="../Required dlls/Microsoft.DirectX.dll" />
+    <Reference Include="../Required dlls/Microsoft.DotNet.PlatformAbstractions.dll" />
+    <Reference Include="../Required dlls/Microsoft.ML.Core.dll" />
+    <Reference Include="../Required dlls/Microsoft.ML.CpuMath.dll" />
+    <Reference Include="../Required dlls/Microsoft.ML.Data.dll" />
+    <Reference Include="../Required dlls/Microsoft.ML.DataView.dll" />
+    <Reference Include="../Required dlls/Microsoft.ML.FastTree.dll" />
+    <Reference Include="../Required dlls/Microsoft.ML.KMeansClustering.dll" />
+    <Reference Include="../Required dlls/Microsoft.ML.LightGbm.dll" />
+    <Reference Include="../Required dlls/Microsoft.ML.PCA.dll" />
+    <Reference Include="../Required dlls/Microsoft.ML.StandardTrainers.dll" />
+    <Reference Include="../Required dlls/Microsoft.ML.Transforms.dll" />
+    <Reference Include="../Required dlls/Microsoft.ML.dll" />
+    <Reference Include="../Required dlls/Microsoft.Web.WebView2.Core.dll" />
+    <Reference Include="../Required dlls/Microsoft.Web.WebView2.WinForms.dll" />
+    <Reference Include="../Required dlls/Microsoft.Web.WebView2.Wpf.dll" />
+    <Reference Include="../Required dlls/NDde.dll" />
+    <Reference Include="../Required dlls/NHunspell.dll" />
+    <Reference Include="../Required dlls/ODApi.dll" />
+    <Reference Include="../Required dlls/ODCrypt.dll" />
+    <Reference Include="../Required dlls/ODR.dll" />
+    <Reference Include="../Required dlls/OpenDentalHelp.dll" />
+    <Reference Include="../Required dlls/OpenPop.dll" />
+    <Reference Include="../Required dlls/Org.Mentalis.Security.dll" />
+    <Reference Include="../Required dlls/RS232.dll" />
+    <Reference Include="../Required dlls/RdlEngine.dll" />
+    <Reference Include="../Required dlls/RdlViewer.dll" />
+    <Reference Include="../Required dlls/Renci.SshNet.dll" />
+    <Reference Include="../Required dlls/Serilog.Enrichers.Environment.dll" />
+    <Reference Include="../Required dlls/Serilog.Enrichers.Thread.dll" />
+    <Reference Include="../Required dlls/Serilog.Extensions.Logging.dll" />
+    <Reference Include="../Required dlls/Serilog.Settings.Configuration.dll" />
+    <Reference Include="../Required dlls/Serilog.Sinks.Console.dll" />
+    <Reference Include="../Required dlls/Serilog.Sinks.Debug.dll" />
+    <Reference Include="../Required dlls/Serilog.Sinks.File.dll" />
+    <Reference Include="../Required dlls/Serilog.Sinks.Literate.dll" />
+    <Reference Include="../Required dlls/Serilog.Sinks.RollingFile.dll" />
+    <Reference Include="../Required dlls/Serilog.Sinks.Trace.dll" />
+    <Reference Include="../Required dlls/Serilog.dll" />
+    <Reference Include="../Required dlls/SerilogTraceListener.dll" />
+    <Reference Include="../Required dlls/SharpDX.Direct3D9.dll" />
+    <Reference Include="../Required dlls/SharpDX.Mathematics.dll" />
+    <Reference Include="../Required dlls/SharpDX.dll" />
+    <Reference Include="../Required dlls/SigPlusNET.dll" />
+    <Reference Include="../Required dlls/SuniUSB.dll" />
+    <Reference Include="../Required dlls/Tamir.SharpSSH.dll" />
+    <Reference Include="../Required dlls/Tao.FreeGlut.dll" />
+    <Reference Include="../Required dlls/Tao.OpenGl.dll" />
+    <Reference Include="../Required dlls/Tao.Platform.Windows.dll" />
+    <Reference Include="../Required dlls/VBbridges.dll" />
+    <Reference Include="../Required dlls/VideoCamLib.dll" />
+    <Reference Include="../Required dlls/VirtualWeb.dll" />
+    <Reference Include="../Required dlls/WebView2Loader.dll" />
+    <Reference Include="../Required dlls/freeglut.dll" />
+    <Reference Include="../Required dlls/log4net.dll" />
+    <Reference Include="../Required dlls/stdole.dll" />
+    <Reference Include="../Required dlls/vcruntime140.dll" />
+    <Reference Include="../Required dlls/xImageDeviceManager.dll" />
+    <Reference Include="../Required dlls/zxing.dll" />
+    <Reference Include="../Required dlls/zxing.presentation.dll" />
+  </ItemGroup>
+</Project>
