@@ -1,9 +1,9 @@
-<!-- Modified for the Apex Dental public source snapshot, 2026-10-24; see NOTICE. -->
+<!-- Modified for the Apex Dental public source snapshot, 2026-10-25; see NOTICE. -->
 <Project Sdk="Microsoft.NET.Sdk.Web">
   <!-- Demo web UI over the headless Linux core. Run inside the VM:
-       dotnet run - -urls http://0.0.0.0:5080 (see FORMS-INVENTORY.md). -->
+       dotnet run - -urls http://127.0.0.1:5080 (see FORMS-INVENTORY.md). -->
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>disable</Nullable>
     <WarningLevel>0</WarningLevel>

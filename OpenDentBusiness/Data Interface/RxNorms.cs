@@ -1,3 +1,4 @@
+// Modified for Apex Dental, 2026-10-25: use framework ZIP implementation; see NOTICE.
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -5,7 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using Ionic.Zip;
+
 
 namespace OpenDentBusiness{
 	///<summary></summary>

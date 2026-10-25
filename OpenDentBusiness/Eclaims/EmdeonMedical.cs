@@ -1,8 +1,9 @@
+// Modified for Apex Dental, 2026-10-25: use framework ZIP implementation; see NOTICE.
 using System;
 using System.Collections.Generic;
 using System.IO;
 using OpenDentBusiness;
-using Ionic.Zip;
+using ZipFile=CodeBase.ZipArchiveBuilder;
 using CodeBase;
 
 namespace OpenDentBusiness.Eclaims {
@@ -35,7 +36,7 @@ namespace OpenDentBusiness.Eclaims {
 				tempZip.Save(zipMemoryStream);
 				tempZip.Dispose();
 				zipMemoryStream.Position=0;
-				byte[] zipFileBytes=zipMemoryStream.GetBuffer();
+				byte[] zipFileBytes=zipMemoryStream.ToArray();
 				string zipFileBytesBase64=Convert.ToBase64String(zipFileBytes);
 				zipMemoryStream.Dispose();
 				bool isTest=(clearinghouseClin.ISA15=="T");

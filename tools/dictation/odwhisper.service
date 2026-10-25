@@ -14,6 +14,29 @@ Environment=WHISPER_PORT=8771
 ExecStart=%h/whisper-venv/bin/python %h/whisper_sidecar.py
 Restart=on-failure
 RestartSec=3
+NoNewPrivileges=true
+PrivateTmp=true
+PrivateDevices=true
+IPAddressDeny=any
+IPAddressAllow=localhost
+MemoryMax=4G
+CPUQuota=200%
+LimitNOFILE=256
+ProtectSystem=strict
+ProtectHome=read-only
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+RestrictSUIDSGID=true
+LockPersonality=true
+CapabilityBoundingSet=
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+UMask=0077
+TasksMax=64
+# Provision the model cache before starting; the running service cannot download models.
+Environment=HF_HUB_OFFLINE=1
+Environment=HF_HUB_DISABLE_TELEMETRY=1
+Environment=DO_NOT_TRACK=1
 
 [Install]
 WantedBy=multi-user.target

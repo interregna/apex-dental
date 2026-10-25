@@ -1,4 +1,5 @@
-﻿using System;
+﻿// Modified by Apex Dental Systems, 2026-10-25: avoid the C# 14 field keyword; see NOTICE.
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -62,10 +63,10 @@ namespace OpenDentBusiness.HL7 {
 		}
 
 		private void AddFields(int quantity) {
-			FieldHL7 field;
+			FieldHL7 parsedField;
 			for(int i=0;i<quantity;i++) {
-				field=new FieldHL7(_delimiters);
-				Fields.Add(field);
+				parsedField=new FieldHL7(_delimiters);
+				Fields.Add(parsedField);
 			}
 		}
 
@@ -104,10 +105,10 @@ namespace OpenDentBusiness.HL7 {
 				string[] fields=_fullText.Replace(fieldSeparatorEscaped,"&124;")//replace \| with &124; (ASCII code for | is 124)
 					.Split(new string[] { "|" },StringSplitOptions.None)//split by any remaining |'s
 					.Select(x => x.Replace("&124;",fieldSeparatorEscaped)).ToArray();//put back \|'s
-				FieldHL7 field;
+				FieldHL7 parsedField;
 				for(int i=0;i<fields.Length;i++) {
-					field=new FieldHL7(fields[i],_delimiters);
-					Fields.Add(field);
+					parsedField=new FieldHL7(fields[i],_delimiters);
+					Fields.Add(parsedField);
 				}
 				try {
 					Name=(SegmentNameHL7)Enum.Parse(typeof(SegmentNameHL7),Fields[0].FullText);

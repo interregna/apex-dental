@@ -905,24 +905,26 @@ namespace OpenDentBusiness {
 				return RetrieveFromInboxOAuth(emailAddress);
 			}
 			int countNewEmails=0;
-			//This code is modified from the example at: http://hpop.sourceforge.net/exampleFetchAllMessages.php
-			using(OpenPop.Pop3.Pop3Client client=new OpenPop.Pop3.Pop3Client()) {//The client disconnects from the server when being disposed.
-				client.Connect(emailAddress.Pop3ServerIncoming,emailAddress.ServerPortIncoming,emailAddress.UseSSL,180000,180000,null);//3 minute timeout, just as for sending emails.
-				client.Authenticate(emailAddress.EmailUsername.Trim(),MiscUtils.Decrypt(emailAddress.EmailPassword),OpenPop.Pop3.AuthenticationMethod.UsernameAndPassword);
-				List<string> listMsgIds=client.GetMessageUids();//Get all unique identifiers for each email in the inbox.
+			// Use the maintained MailKit client and require TLS before authentication.
+			using(MailKit.Net.Pop3.Pop3Client client=new MailKit.Net.Pop3.Pop3Client()) {//The client disconnects from the server when being disposed.
+				client.Timeout=180000;
+				client.Connect(emailAddress.Pop3ServerIncoming,emailAddress.ServerPortIncoming,
+					emailAddress.UseSSL?SecureSocketOptions.SslOnConnect:SecureSocketOptions.StartTls);//3 minute timeout, just as for sending emails.
+				client.Authenticate(emailAddress.EmailUsername.Trim(),MiscUtils.Decrypt(emailAddress.EmailPassword));
+				List<string> listMsgIds=client.GetMessageUids().ToList();//Get all unique identifiers for each email in the inbox.
 				List<string> listMsgIdsDownloaded=EmailMessageUids.GetMsgIdsRecipientAddress(emailAddress.EmailUsername.Trim());
 				for(int i=0;i<listMsgIds.Count;i++) {
-					int msgIndex=i+1;//The message indicies are 1-based.
+					int msgIndex=i;//MailKit message indices are zero-based.
 					string msgId=listMsgIds[i];//Example: 1420562540.886638.p3plgemini22-06.prod.phx.2602059520
-					OpenPop.Mime.Header.MessageHeader messageHeader=null;
+					MimeKit.MimeMessage messageHeader=null;
 					if(msgId.Length==0) {
 						//Message Uids are commonly used, but are optional according to the RFC822 email standard.
 						//Uids are assgined by the sending client application, so they could be anything, but are supposed to be unique.
 						//Additionally, most email servers are probably smart enough to create a Uid for any message where the Uid is missing.
 						//In the worst case scenario, we create a Uid for the message based off of the message header information, which takes a little extra time, 
 						//but is better than downloading old messages again, especially if some of those messages contain large attachments.
-						messageHeader=client.GetMessageHeaders(msgIndex);//Takes 1-2 seconds to get this information from the server.  The message, minus body and minus attachments.
-						msgId=messageHeader.DateSent.ToString("yyyyMMddHHmmss")+emailAddress.EmailUsername.Trim()+messageHeader.From.Address+messageHeader.Subject;
+						messageHeader=client.GetMessage(msgIndex);//UID-less servers require a full MIME message for the legacy deduplication key.
+						msgId=messageHeader.Date.DateTime.ToString("yyyyMMddHHmmss")+emailAddress.EmailUsername.Trim()+(messageHeader.From.Mailboxes.FirstOrDefault()?.Address??"")+messageHeader.Subject;
 					}
 					if(msgId.Length>4000) {//The EmailMessageUid.MsgId field is only 4000 characters in size.
 						msgId=msgId.Substring(0,4000);
@@ -945,9 +947,9 @@ namespace OpenDentBusiness {
 						}
 					}
 					//At this point, we know that the email is one which we have not downloaded yet.
-					OpenPop.Mime.Message messageOpenPop;
+					MimeKit.MimeMessage messageMime;
 					try {
-						messageOpenPop=client.GetMessage(msgIndex);//This is where the entire raw email is downloaded.
+						messageMime=messageHeader??client.GetMessage(msgIndex);//This is where the entire raw email is downloaded.
 					}
 					catch(Exception ex) {
 						//Certain error messages should be treated as "downloaded" so that we do not waste time trying to download these email messages again.
@@ -967,10 +969,10 @@ namespace OpenDentBusiness {
 						continue;
 					}
 					try {
-						if(IsEmailFromInbox(emailAddress.EmailUsername,messageOpenPop.Headers.To,ListTools.FromSingle(messageOpenPop.Headers.From)
-							,messageOpenPop.Headers.Cc,messageOpenPop.Headers.Bcc)) 
+						if(IsEmailFromInbox(emailAddress.EmailUsername,messageMime.To.Mailboxes.ToList(),messageMime.From.Mailboxes.ToList()
+							,messageMime.Cc.Mailboxes.ToList(),messageMime.Bcc.Mailboxes.ToList()))
 						{
-							string strRawEmail=messageOpenPop.MessagePart.BodyEncoding.GetString(messageOpenPop.RawMessage);
+							string strRawEmail=messageMime.ToString();
 							EmailMessage emailMessage=ProcessRawEmailMessageIn(strRawEmail,0,emailAddress,true);//Inserts to db.
 							countNewEmails++;
 						}

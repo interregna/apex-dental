@@ -25,7 +25,9 @@ System.Globalization.CultureInfo.DefaultThreadCurrentCulture=_money;
 System.Threading.Thread.CurrentThread.CurrentCulture=_money;
 
 var builder=WebApplication.CreateBuilder(args);
+WebSecurity.Configure(builder);
 var app=builder.Build();
+WebSecurity.Use(app);
 //Workstation UI (wwwroot: index.html/app.css/app.js) is served at "/";
 //the original single-string demo page stays at /legacy for comparison.
 app.UseDefaultFiles();
@@ -52,8 +54,8 @@ string database=Environment.GetEnvironmentVariable("OD_DB_NAME")??"opendental";
 RemotingClient.MiddleTierRole=MiddleTierRole.ClientDirect;
 FontResolverOD.Register();//PDFsharp 6 font embedding on Linux
 Cache.Refresh(InvalidType.Prefs,InvalidType.Security,InvalidType.Providers,InvalidType.Defs,InvalidType.ProcCodes);
-Security.CurUser=Userods.GetFirstOrDefault(x => true)??new Userod() { UserNum=1,UserName="webdemo" };
-Console.WriteLine($"Connected to {server}, schema {PrefC.GetString(PrefName.DataBaseVersion)}, user {Security.CurUser.UserName}");
+Security.CurUser=null;
+Console.WriteLine($"Connected; schema {PrefC.GetString(PrefName.DataBaseVersion)}");
 
 app.MapGet("/api/patients",() => {
 	DataTable table=DataCore.GetTable("SELECT PatNum FROM patient WHERE PatStatus=0 ORDER BY LName,FName LIMIT 200");
@@ -122,7 +124,7 @@ app.MapPost("/api/scan/acquire",async (ScanRequest dto) => {
 		return Results.Json(new { docNum=doc.DocNum,fileName=doc.FileName,size=bytes.Length });
 	}
 	catch(Exception ex) {
-		return Results.Text(ex.ToString(),statusCode:500);
+		return Results.Text("Scanner acquisition failed.",statusCode:500);
 	}
 });
 

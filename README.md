@@ -2,7 +2,7 @@
 
 <!-- Modified by Apex Dental Systems, 2026-10-25; see NOTICE. -->
 
-An experimental Linux/.NET 8 business-layer port and browser interface derived
+An experimental Linux/.NET 10 business-layer port and browser interface derived
 from Open Dental 24.3.63.0. Includes practice-local scheduling, patient/family
 workflows, charting, billing, reporting, and local voice dictation with clinician
 review before filing. This is an independent fork, not an upstream release.
@@ -16,21 +16,23 @@ Participation is optional; the software and local dictation remain usable withou
 sharing data. Data contribution and benchmarking are planned capabilities and
 are not implemented in this preview.
 
-The web port is a development preview. Authentication still uses a process-global
-upstream user context, and drafts and sessions are memory-only. Use synthetic
-data in an isolated development environment. See [SECURITY.md](SECURITY.md).
+The web port is a development preview. User identity is isolated per asynchronous
+request; sessions expire after eight hours and are lost on restart. Drafts remain
+in memory. Use synthetic data in an isolated development environment. See [SECURITY.md](SECURITY.md).
 
 ## Build
 
-The `global.json` file selects an installed .NET 8 SDK; the business core uses
-C# 12 so newer compiler keywords cannot change inherited source semantics.
-On Linux, install the .NET 8 SDK and Python 3. Runtime PDF/image support also
-requires `libgdiplus`, `fontconfig`, and `fonts-liberation`.
+The `global.json` file selects .NET SDK 10.0.403 (C# 14); install the latest .NET 10
+SDK and Python 3. Linux PDF/image rendering still requires unsupported
+`System.Drawing.Common` 6.0, plus `libgdiplus`, `fontconfig`, and
+`fonts-liberation`. PDFsharp also stays at the final MIT release because newer versions changed
+license. These exceptions prevent a fully supported runtime dependency set; see [dependencies](docs/DEPENDENCIES.md).
 
 ```sh
 python3 tools/restore_dependencies.py
 python3 tools/publication/check_boundary.py
-dotnet build OpenDentalWebDemo/OpenDentalWebDemo.csproj -c Release
+dotnet restore OpenDentalWebDemo/OpenDentalWebDemo.csproj --locked-mode
+dotnet build OpenDentalWebDemo/OpenDentalWebDemo.csproj -c Release --no-restore
 ```
 
 The dependency restore downloads checksum-pinned upstream DLLs into the ignored

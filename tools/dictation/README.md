@@ -22,7 +22,9 @@ the transcription itself. The alternative external engine is described in
 ```
 sudo apt-get install -y python3-venv
 python3 -m venv ~/whisper-venv
-~/whisper-venv/bin/pip install faster-whisper
+~/whisper-venv/bin/pip install --require-hashes --only-binary=:all: -r tools/dictation/requirements.txt
+# One-time model provisioning (network access required, no patient audio):
+~/whisper-venv/bin/python -c 'from faster_whisper import WhisperModel; WhisperModel("base", device="cpu", compute_type="int8")'
 cp whisper_sidecar.py ~/whisper_sidecar.py
 sudo cp odwhisper.service /etc/systemd/system/   # edit User= and paths
 sudo systemctl daemon-reload && sudo systemctl enable --now odwhisper
@@ -34,8 +36,20 @@ English-only (disables translate). The app finds the sidecar at `WHISPER_URL`
 (default `http://127.0.0.1:8771`).
 
 ## Before production (not done here)
-TLS at the origin + `Secure` cookies; encrypt drafts at rest (or persist to an encrypted
+TLS at the origin (Secure cookies are set on HTTPS requests); encrypt drafts at rest (or persist to an encrypted
 store instead of memory); per-user permission already gated (ChartModule); consent-to-record
 notice; retention/purge policy; formal HIPAA risk assessment. If you select the external
 engine (`TRANSCRIPTION_ENGINE=service`), that service receives patient audio and needs
 a BAA and your practice's authorization.
+
+The Python 3.12/Linux dependency snapshot is hash-locked and checked by CI with
+`pip-audit`. Refresh it through the reviewed process in
+[dependencies](../../docs/DEPENDENCIES.md). The sidecar limits audio to 16 MiB,
+allows one inference at a time, bounds HTTP workers to eight and times out idle
+connections. Its systemd unit drops capabilities, restricts filesystem writes,
+limits CPU/memory, permits only loopback IP traffic, and disables model-hub
+telemetry after provisioning. The IP filter requires host systemd/cgroup support;
+verify the deployed unit on the target host.
+Temporary audio is written to a private temporary directory and removed after
+processing. The unit requires its model cache to be provisioned under the same
+service account before it starts.

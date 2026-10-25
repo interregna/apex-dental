@@ -1,4 +1,4 @@
-// Modified for the Apex Dental public source snapshot, 2026-10-24; see NOTICE.
+// Modified for the Apex Dental public source snapshot, 2026-10-25; see NOTICE.
 /*
  * Proof harness for the headless Linux core (OpenDentBusinessCore).
  * Connects to the MariaDB in the VM through the real Open Dental data layer
@@ -18,7 +18,7 @@ class Program {
 		if(idxServer>=0 && idxServer+1<args.Length) {
 			server=args[idxServer+1];
 		}
-		Console.WriteLine("== Open Dental headless core harness (.NET 8, Linux) ==");
+		Console.WriteLine("== Open Dental headless core harness (.NET 10, Linux) ==");
 		FontResolverOD.Register();//PDFsharp 6 font embedding on Linux (Liberation fonts)
 		Console.WriteLine($"Connecting to MariaDB at {server}:3306");
 		DataConnection.DBtype=DatabaseType.MySql;

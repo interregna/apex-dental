@@ -1,4 +1,29 @@
-﻿using System;
+﻿// Modified for Apex Dental, 2026-10-25: disable in-process desktop plug-ins in the web build; see NOTICE.
+#if NET6_0_OR_GREATER
+using System;
+using System.Collections.Generic;
+using System.Reflection;
+using System.Windows.Forms;
+namespace OpenDentBusiness {
+	public class Plugins {
+		public static List<PluginContainer> ListPlugins {
+			get => null;
+			set {
+				if(value!=null && value.Count!=0) {
+					throw new NotSupportedException("In-process plug-ins are disabled in the web application.");
+				}
+			}
+		}
+		public static bool PluginsAreLoaded => false;
+		public static void LoadAllPlugins(Form host=null) { }
+		public static Assembly GetAssembly(string name) => null;
+		public static bool HookMethod(object sender,string hookName,params object[] parameters) => false;
+		public static void HookAddCode(object sender,string hookName,params object[] parameters) { }
+		public static void LaunchToolbarButton(long programNum,long patNum) { }
+	}
+}
+#else
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -211,3 +236,4 @@ namespace OpenDentBusiness {
 
 	}
 }
+#endif

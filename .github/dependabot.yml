@@ -1,0 +1,23 @@
+version: 2
+updates:
+  - package-ecosystem: nuget
+    directories:
+      - /OpenDentBusinessCore
+      - /OpenDentalWebDemo
+      - /OpenDentBusinessCore/Harness
+      - /tools/tests/TranscriptionContract
+    schedule:
+      interval: daily
+    open-pull-requests-limit: 5
+  - package-ecosystem: pip
+    directories:
+      - /tools/dictation
+      - /tools/security
+    schedule:
+      interval: daily
+    open-pull-requests-limit: 5
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: daily
+    open-pull-requests-limit: 5

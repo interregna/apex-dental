@@ -1,3 +1,4 @@
+// Modified for Apex Dental, 2026-10-25: isolate web user identity across asynchronous requests; see NOTICE.
 using CodeBase;
 using System;
 using System.Data;
@@ -12,10 +13,14 @@ namespace OpenDentBusiness{
 	///<summary></summary>
 	public class Security{
 		///<summary>The current user.  Might be null when first starting the program.  Otherwise, must contain valid user.</summary>
+		#if NET6_0_OR_GREATER
+		private static readonly System.Threading.AsyncLocal<Userod> _requestUser=new System.Threading.AsyncLocal<Userod>();
+#else
 		private static Userod curUser;
 		///<summary>The current user.  Might be null when first starting the program.  Otherwise, must contain valid user.</summary>
 		[ThreadStatic]
 		private static Userod _curUserT;
+#endif
 		///<Summary>Contains the value of Environment.MachineName.  If middle tier, it will be the name of the last computer to send 
 		///a DataTransferObject to the server.</Summary>
 		private static string _curComputerName;
@@ -38,6 +43,16 @@ namespace OpenDentBusiness{
 		///processing due to inactivity.  Must be public so that it can be accessed from multiple application level classes.</summary>
 		public static DateTime DateTimeLastActivity;
 
+#if NET6_0_OR_GREATER
+		public static Userod CurUser {
+			get => _requestUser.Value;
+			set {
+				if(_requestUser.Value==value) { return; }
+				_requestUser.Value=value;
+				ODEvent.Fire(ODEventType.Userod,value?.UserNum??0);
+			}
+		}
+#else
 		public static Userod CurUser {
 			get {
 				if(_curUserT!=null) {
@@ -57,6 +72,7 @@ namespace OpenDentBusiness{
 				ODEvent.Fire(ODEventType.Userod,_curUserT?.UserNum??curUser?.UserNum??0);
 			}
 		}
+#endif
 
 		public static string CurComputerName {
 			get {
@@ -442,7 +458,11 @@ namespace OpenDentBusiness{
 		///<summary>This sets the private _curUserT field using the passed in Userod object. This can be used to change the thread static object. Does nothing if the user object that is passed in is null.</summary>
 		public static void SetUserCurT(Userod userT) {
 			if(userT!=null) {
+#if NET6_0_OR_GREATER
+				_requestUser.Value=userT;
+#else
 				_curUserT=userT;
+#endif
 			}
 		}
 

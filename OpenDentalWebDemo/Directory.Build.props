@@ -1,4 +1,5 @@
 <Project>
+  <Import Project="$(MSBuildThisFileDirectory)../Directory.Build.props" />
   <!-- The Lima VM mounts this repo read-only, so build artifacts must land in the
        guest home dir. Per-project subdirs prevent OpenDentBusinessCore, Harness,
        and OpenDentalWebDemo from clobbering each other's obj/bin (a shared obj dir

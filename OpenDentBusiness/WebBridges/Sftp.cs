@@ -1,3 +1,4 @@
+// Modified for Apex Dental, 2026-10-25: remove unused legacy POP3 dependency; see NOTICE.
 // Modified by Apex Dental Systems, 2026-10-25: adapted for this web port; see NOTICE.
 using System;
 using System.Collections.Generic;
@@ -8,7 +9,7 @@ using System.IO;
 using System.Net;
 using System.Security.Cryptography.X509Certificates;
 using CodeBase;
-using OpenPop.Pop3;
+
 
 namespace OpenDentBusiness {
 	public static class ODSftp {

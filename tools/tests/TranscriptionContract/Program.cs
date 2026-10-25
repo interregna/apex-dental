@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Logging;
 using OpenDentalWebDemo.Modules;
 
-string[] scenarios={"local","local-ipv6","external","engine-snapshot","http-external","http-loopback-service","http-ipv6-service","whisper-external","embedded-credentials","query","engine-mismatch","engine-no-url","engine-no-token","engine-unknown","redirect","health-identity","health-error","health-invalid-json","health-service-failure","service-unconfigured","service-insecure","service-traversal","service-no-token","service-success","service-error","service-redirect","service-isolation","service-explicit-enable","service-legacy-only"};
+string[] scenarios={"security","local","local-ipv6","external","engine-snapshot","http-external","http-loopback-service","http-ipv6-service","whisper-external","embedded-credentials","query","engine-mismatch","engine-no-url","engine-no-token","engine-unknown","redirect","health-identity","health-error","health-invalid-json","health-service-failure","service-unconfigured","service-insecure","service-traversal","service-no-token","service-success","service-error","service-redirect","service-isolation","service-explicit-enable","service-legacy-only"};
 string[] rejected={"http-external","http-loopback-service","http-ipv6-service","whisper-external","embedded-credentials","query","engine-mismatch","engine-no-url","engine-no-token","engine-unknown"};
 if(args.Length==0) {
     foreach(string scenario in scenarios) {
@@ -23,6 +23,7 @@ if(args.Length==0) {
     return;
 }
 string test=args[0];
+if(test=="security") { await SecurityChecks.Run(); return; }
 if(test.StartsWith("service-")) { await ServiceChecks.Run(test); return; }
 Environment.SetEnvironmentVariable("TRANSCRIPTION_ENGINE",null);
 Environment.SetEnvironmentVariable("WHISPER_URL",null);
