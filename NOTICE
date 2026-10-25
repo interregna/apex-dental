@@ -34,3 +34,4 @@ Release preparation, 2026-10-25:
 - Independently enabled/scoped mail, storage, transfer, and tax service clients.
 - Public source inventory checks for both index and working tree; neutral tooling.
 - Dated change notices on modified inherited files and preview-accurate site source.
+- Pinned the .NET 8 SDK and C# 12 to keep CI consistent with local builds.

@@ -22,6 +22,8 @@ data in an isolated development environment. See [SECURITY.md](SECURITY.md).
 
 ## Build
 
+The `global.json` file selects an installed .NET 8 SDK; the business core uses
+C# 12 so newer compiler keywords cannot change inherited source semantics.
 On Linux, install the .NET 8 SDK and Python 3. Runtime PDF/image support also
 requires `libgdiplus`, `fontconfig`, and `fonts-liberation`.
 

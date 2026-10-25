@@ -15,7 +15,7 @@ ROOT=Path(__file__).resolve().parents[2]
 ALLOWED_ROOTS={'CodeBase','DataConnectionBase','OpenDentBusiness','OpenDentBusinessCore',
                'OpenDentalWebDemo','OpenDental','tools','docs','site','.github'}
 ALLOWED_FILES={'.gitignore','.gitattributes','.env.example','LICENSE','NOTICE','README.md',
-               'CONTRIBUTING.md','SECURITY.md','dependencies.json','public-files.json'}
+               'CONTRIBUTING.md','SECURITY.md','dependencies.json','public-files.json','global.json'}
 EXCLUDED_PARTS={'private','secrets','.aws','bin','obj','.venv','__pycache__'}
 SECRET_PATTERNS={
     'private key':rb'-----BEGIN (?:RSA |EC |OPENSSH |DSA )?PRIVATE KEY-----',

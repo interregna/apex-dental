@@ -1,4 +1,4 @@
-<!-- Modified for the Apex Dental public source snapshot, 2026-10-24; see NOTICE. -->
+<!-- Modified for the Apex Dental public source snapshot, 2026-10-25; see NOTICE. -->
 <Project Sdk="Microsoft.NET.Sdk">
   <!-- Headless Linux port of the Open Dental business layer.
        Compiles the unmodified upstream sources from CodeBase, DataConnectionBase,
@@ -9,7 +9,7 @@
     <TargetFramework>net8.0</TargetFramework>
     <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <LangVersion>latest</LangVersion>
+    <LangVersion>12.0</LangVersion>
     <Nullable>disable</Nullable>
     <WarningLevel>0</WarningLevel>
     <NoWarn>CS0618;CS0612;CS1701;NU1701;MSB3277</NoWarn>
