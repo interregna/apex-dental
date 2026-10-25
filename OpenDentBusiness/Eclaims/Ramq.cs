@@ -1,4 +1,5 @@
-﻿using System;
+﻿// Modified for Apex Dental, 2026-10-25: use framework ZIP implementation; see NOTICE.
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -6,7 +7,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml.Serialization;
 using OpenDentBusiness;
-using Ionic.Zip;
+using ZipFile=CodeBase.ZipArchiveBuilder;
 using System.Windows;
 
 namespace OpenDentBusiness.Eclaims {
@@ -171,7 +172,7 @@ namespace OpenDentBusiness.Eclaims {
 			ZipFile zip=null;
 			try {
 				zip=new ZipFile();
-				zip.UseZip64WhenSaving=Zip64Option.Always;
+				// System.IO.Compression selects ZIP64 when needed.
 				zip.AddEntry("claims"+DateTime.Now.ToString("yyyyMMddHHmmss")+".xml",xml);
 				zip.Save(zipFilePath);
 				zip.Dispose();

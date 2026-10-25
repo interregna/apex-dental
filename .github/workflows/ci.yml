@@ -1,22 +1,52 @@
 name: Public source checks
-on: [push, pull_request]
+on:
+  push:
+  pull_request:
+  schedule:
+    - cron: '17 9 * * *'
 permissions:
   contents: read
+env:
+  DOTNET_CLI_TELEMETRY_OPTOUT: '1'
+  DOTNET_NOLOGO: '1'
 jobs:
   publication:
     runs-on: ubuntu-24.04
+    timeout-minutes: 5
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
       - run: python3 -m unittest discover -s tools/publication -p 'test_*.py'
       - run: python3 tools/publication/check_boundary.py
   build:
     runs-on: ubuntu-24.04
+    timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v7
-      - uses: actions/setup-dotnet@v6
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          dotnet-version: '8.0.x'
+          persist-credentials: false
+      - uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+        with:
+          dotnet-version: '10.0.x'
       - run: python3 tools/restore_dependencies.py
-      - run: dotnet build OpenDentalWebDemo/OpenDentalWebDemo.csproj -c Release --nologo
-      - run: dotnet build OpenDentBusinessCore/Harness/Harness.csproj -c Release --nologo
-      - run: dotnet run --project tools/tests/TranscriptionContract -c Release
+      - run: dotnet restore OpenDentalWebDemo/OpenDentalWebDemo.csproj --locked-mode
+      - run: dotnet restore OpenDentBusinessCore/Harness/Harness.csproj --locked-mode
+      - run: dotnet restore tools/tests/TranscriptionContract --locked-mode
+      - run: dotnet build OpenDentalWebDemo/OpenDentalWebDemo.csproj -c Release --no-restore --nologo
+      - run: dotnet build OpenDentBusinessCore/Harness/Harness.csproj -c Release --no-restore --nologo
+      - run: dotnet run --project tools/tests/TranscriptionContract -c Release --no-restore
+  security:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: '3.12'
+      - run: python -m pip install --require-hashes -r tools/security/requirements.txt
+      - run: pip-audit --require-hashes -r tools/dictation/requirements.txt
+      - run: pip-audit --require-hashes -r tools/security/requirements.txt
+      - run: python -m unittest discover -s tools/dictation -p 'test_*.py'

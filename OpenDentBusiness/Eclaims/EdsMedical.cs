@@ -1,4 +1,5 @@
-﻿using System;
+﻿// Modified for Apex Dental, 2026-10-25: remove unused legacy SSH dependency; see NOTICE.
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -20,7 +21,7 @@ using System.Xml.Serialization;
 using System.Xml.XPath;
 using CodeBase;
 using OpenDentBusiness;
-using Tamir.SharpSsh.jsch;
+
 
 namespace OpenDentBusiness.Eclaims {
 	class EdsMedical {

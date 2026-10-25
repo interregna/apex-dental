@@ -1,3 +1,13 @@
+// Modified for Apex Dental, 2026-10-25: retire unmaintained SFTP transport in the web build; see NOTICE.
+#if NET6_0_OR_GREATER
+using CodeBase;
+namespace OpenDentBusiness.Eclaims {
+	public class MercuryDE {
+		public static string ErrorMessage="Legacy SFTP transport is disabled in this web preview.";
+		public static bool Launch(Clearinghouse clearinghouseClin,int batchNum,IODProgressExtended progress=null) => false;
+	}
+}
+#else
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -203,3 +213,5 @@ namespace OpenDentBusiness.Eclaims
 
 	}
 }
+
+#endif

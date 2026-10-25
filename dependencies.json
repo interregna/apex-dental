@@ -3,14 +3,6 @@
   "revision": "d804c19546233593d8a66af0591ed118a9e2c794",
   "files": [
     {
-      "path": "Required dlls/AxInterop.AcroPDFLib.dll",
-      "sha256": "bc6acb90c0eb5a59cc78c82cd837c966c82de64147e8634752a7023edcf66089"
-    },
-    {
-      "path": "Required dlls/AxInterop.WMPLib.dll",
-      "sha256": "1fcdfffaec5589ace65db30b5d92d320a68b34fc2c75272e6ff2900ea67e3dd3"
-    },
-    {
       "path": "Required dlls/Bridges.dll",
       "sha256": "bf526d77ab29ea7c5c26b8cc8fb24a63cb438425538157c88de27ee3cc04c8d7"
     },
@@ -21,30 +13,6 @@
     {
       "path": "Required dlls/Dicom.Core.dll",
       "sha256": "4d7e03850bdf152b2881ac69f5e28a0bca873a03acef95e3b3a45ed80f779939"
-    },
-    {
-      "path": "Required dlls/Dicom.Native.dll",
-      "sha256": "64a4d06a9b4679c8b5b638108c311bc1e030aab52ac724e5941b09dc8957186e"
-    },
-    {
-      "path": "Required dlls/DiffieHellman.dll",
-      "sha256": "ec0a21d25d627fb48d8ce3045f2cc0750e828c935106b7869c0ab6af9fde6328"
-    },
-    {
-      "path": "Required dlls/DpsPos.dll",
-      "sha256": "4d66a16903fd59935dc0fc9a35d991e9ec2d632713b13f7da02e39e940bc2052"
-    },
-    {
-      "path": "Required dlls/EZT4Jpeg.dll",
-      "sha256": "af550c9ef15c30ce0557ed90a861d12e2a316c385119e4962fd682f8f60a87c7"
-    },
-    {
-      "path": "Required dlls/EZT4Pdf.dll",
-      "sha256": "0841bae5c4a2401f9513ac037ccf36cc245c5d22624f002b59d545d590372b59"
-    },
-    {
-      "path": "Required dlls/Eztwain4.dll",
-      "sha256": "bb2215439f8ae4c5cfbbabe19e3ed2960d630050838b5bcb70a9eb09e8a3057f"
     },
     {
       "path": "Required dlls/Health.Direct.Agent.dll",
@@ -59,320 +27,36 @@
       "sha256": "6f53ea110b5ed43ccd22dcaf07fb8abf4ce11a184297f7879e4637c49426e7f8"
     },
     {
-      "path": "Required dlls/Hunspellx64.dll",
-      "sha256": "bacd3ffb8be84f4738ca8c000378a9ecc848f0636cfc615baf34978bcefb19cb"
-    },
-    {
-      "path": "Required dlls/Hunspellx86.dll",
-      "sha256": "412bd20ecfd74e527a5dc93faa035beaa6f24b6e18b8099c8eb8d32004c99bfa"
-    },
-    {
-      "path": "Required dlls/ImagingDeviceManager.dll",
-      "sha256": "97c45c1ef64ec774f7cf74484f3d94321842e6e93840e8006cf40017dbef4de5"
-    },
-    {
-      "path": "Required dlls/Interop.AFORMAUTLib.dll",
-      "sha256": "f802cdc221a3eb9486cf07c73c72d2b7231c395e162c9ba0f4179aece5b4a259"
-    },
-    {
-      "path": "Required dlls/Interop.AcroPDFLib.dll",
-      "sha256": "065d5b659823d6ee61d1f3d5f864e2716c08163ff6958d881b2cdd06fa568b46"
-    },
-    {
-      "path": "Required dlls/Interop.Acrobat.dll",
-      "sha256": "1364d6c8e66d2f5fe8bb81cd5c21749c06584c080f6df0fca85d7307d3c0941d"
-    },
-    {
-      "path": "Required dlls/Interop.CDRDATALib.dll",
-      "sha256": "290013e01ed21f7a4a1624bfa103521c9668d92226efde029fe9c8f8910229c3"
-    },
-    {
-      "path": "Required dlls/Interop.CDRDicom.dll",
-      "sha256": "11ab7ab3e9dec156731d8ec3717a3d46385e34d809f4b9d11a2fbe66c050db50"
-    },
-    {
       "path": "Required dlls/Interop.Microsoft.Office.Core.dll",
       "sha256": "c7743614b11eca2352286aa55c2d106d19d1b95567557c1a125510e88f5f4000"
-    },
-    {
-      "path": "Required dlls/Interop.QBFC10.dll",
-      "sha256": "46b23f148edb00404de93eecb433eb4ba5ef9d2efb8a8b68087a762c43baa0ca"
     },
     {
       "path": "Required dlls/Interop.VBIDE.dll",
       "sha256": "800a858f742d6a1d23b23f66072bf5dccfe00104b679c2615cf161407769d053"
     },
     {
-      "path": "Required dlls/Interop.WMPLib.dll",
-      "sha256": "120c604dc5e3dd2870aff0b34ab76f639614ce97745912635354140fe9da3836"
-    },
-    {
       "path": "Required dlls/Interop.Word.dll",
       "sha256": "699c4f7d0ca97a4468ccb5c85203ccc02d7b732517a610e29198685341c9e0ba"
-    },
-    {
-      "path": "Required dlls/Ionic.Zip.dll",
-      "sha256": "1c87532674f1c8d2313e986544ad01404a6990b9bbff6a4576565a677c31d4f6"
-    },
-    {
-      "path": "Required dlls/MSVCR71.dll",
-      "sha256": "8094af5ee310714caebccaeee7769ffb08048503ba478b879edfef5f1a24fefe"
-    },
-    {
-      "path": "Required dlls/MediaFoundation.Extension.dll",
-      "sha256": "00deae6f1ee56f8e35bc1a58936943ee1405ac39bc60675df33e9b713fc8a3d3"
-    },
-    {
-      "path": "Required dlls/MediaFoundation.dll",
-      "sha256": "25f89bf83f0606f4520829b2b9350f98b41220eccd9f2b3529ce86e86cfe5ecb"
-    },
-    {
-      "path": "Required dlls/Microsoft.DirectX.Direct3D.dll",
-      "sha256": "f3359d5e41b1d4fec7230579a593e40fe44f6afdfacd1e2bbe52ee06d84686fb"
-    },
-    {
-      "path": "Required dlls/Microsoft.DirectX.Direct3DX.dll",
-      "sha256": "2ee41d4d591a39d648e90db4d47d0fa0557fd68197756ee2ee94fcde4d820cfa"
-    },
-    {
-      "path": "Required dlls/Microsoft.DirectX.dll",
-      "sha256": "942e98f142373547493f13b14e1603b2420851aff013d3085bada7b6b2214d9c"
-    },
-    {
-      "path": "Required dlls/Microsoft.DotNet.PlatformAbstractions.dll",
-      "sha256": "26c5e62c1fa37a38710bb3a4cc8e98554039e5d60000c1eb9202f3407adf5047"
-    },
-    {
-      "path": "Required dlls/Microsoft.ML.Core.dll",
-      "sha256": "47c3a2b27944ff37e40415c84c00e82e6786e46e7eded8da653393e7ee692f09"
-    },
-    {
-      "path": "Required dlls/Microsoft.ML.CpuMath.dll",
-      "sha256": "aec9613eb28da3236725ad5895a38444144ecfc0d88cddfeb486accbd32ba924"
-    },
-    {
-      "path": "Required dlls/Microsoft.ML.Data.dll",
-      "sha256": "467f567df19de24fae464093ddc176a54a01847dad345c36389c688e2c708820"
-    },
-    {
-      "path": "Required dlls/Microsoft.ML.DataView.dll",
-      "sha256": "a26e1ed42d3f7b0a593e552064ce5dc29ab6644deda3a72ae1d10a29b2e73272"
-    },
-    {
-      "path": "Required dlls/Microsoft.ML.FastTree.dll",
-      "sha256": "95ec1c4b3414b6a0a219addf2a788792d00335c0403249d8d779b8e44cc4fdac"
-    },
-    {
-      "path": "Required dlls/Microsoft.ML.KMeansClustering.dll",
-      "sha256": "f7aebf81daa8abde2c75067269ec791cb72f67ac905769c555b2c1181cd80fd6"
-    },
-    {
-      "path": "Required dlls/Microsoft.ML.LightGbm.dll",
-      "sha256": "c4075ee6cac037671df654747a5760447bd8d7647d32816df8f1154c5ab881be"
-    },
-    {
-      "path": "Required dlls/Microsoft.ML.PCA.dll",
-      "sha256": "5e8cd120b860c36643f39ba22b6c94b18b30062f0835638878c923eb72368e91"
-    },
-    {
-      "path": "Required dlls/Microsoft.ML.StandardTrainers.dll",
-      "sha256": "6d2118bfbcae3353c42e2f666dea7092a131362d782990d9e919bfc4dea8397b"
-    },
-    {
-      "path": "Required dlls/Microsoft.ML.Transforms.dll",
-      "sha256": "9ce1641aeffccf36817d0c834fe8d63d03ea782836dc4cb5bb8f4d4439ad20dc"
-    },
-    {
-      "path": "Required dlls/Microsoft.ML.dll",
-      "sha256": "e3847a7a2536823d870e934c0f1ed2379ffb1e7a0aba09aaf027e770b26807bd"
-    },
-    {
-      "path": "Required dlls/Microsoft.Web.WebView2.Core.dll",
-      "sha256": "406d5cc45417ddf6f69ea5cfa6748fea19920eb6b3bbf80d65d927ce8ef1cb30"
-    },
-    {
-      "path": "Required dlls/Microsoft.Web.WebView2.WinForms.dll",
-      "sha256": "275255c348447db0dbf8b5dba54c6a3af356347d83325c6442145cfd8890de89"
-    },
-    {
-      "path": "Required dlls/Microsoft.Web.WebView2.Wpf.dll",
-      "sha256": "abfc3d269544ebe42797cdd98c65b42ecc04fab74c53b3b5942a08d9b425bade"
-    },
-    {
-      "path": "Required dlls/NDde.dll",
-      "sha256": "4110dc8470c731e4722df6f971ae0c58d0426ff7cfdc004ad018f56dcf5821af"
-    },
-    {
-      "path": "Required dlls/NHunspell.dll",
-      "sha256": "6eaa7eef91ea05fc0bad69ba341376d99db8def8771551d0e37831c035aceed1"
-    },
-    {
-      "path": "Required dlls/ODApi.dll",
-      "sha256": "47412f53d94aefbfbe89bfee2c163a5e5838b0a3312ee52d5fb66f3e471dd6bc"
     },
     {
       "path": "Required dlls/ODCrypt.dll",
       "sha256": "dd4e03678f7188ee2b29b33b3a264d2bd4082b61c77da399c137206949f0d5ce"
     },
     {
-      "path": "Required dlls/ODR.dll",
-      "sha256": "f4b221a8eab58320faeb6d404f687978e0afe8efec44421f40977ecfec751530"
-    },
-    {
-      "path": "Required dlls/OpenDentalHelp.dll",
-      "sha256": "babe2780ea962e64df0d6f0d268fb72113b0e7ffe34931d9f0e140cafc2f67f0"
-    },
-    {
-      "path": "Required dlls/OpenPop.dll",
-      "sha256": "7f34f2e3e71f6f1dac02f7e166bfd75bb0708119121dd3b6bce551e24d5c4a06"
-    },
-    {
-      "path": "Required dlls/Org.Mentalis.Security.dll",
-      "sha256": "31023504169f50d7ac3aabc89ff77392ef0d792d6d0235212d9be2ae2f6b7fc1"
-    },
-    {
       "path": "Required dlls/RS232.dll",
       "sha256": "b777a572b1fea244e0813b6cf422da838b0a08beff4ca88857772fee7f27cc19"
-    },
-    {
-      "path": "Required dlls/RdlEngine.dll",
-      "sha256": "c14edd2ae1799062584621bf7910f09206ca240b2cc8d064a63a9e140294aecd"
-    },
-    {
-      "path": "Required dlls/RdlViewer.dll",
-      "sha256": "7f7f96c692a97832bfd2c73df3a6b815e6cb7a4657c40767aed72a0921b9a989"
-    },
-    {
-      "path": "Required dlls/Renci.SshNet.dll",
-      "sha256": "aa45f9cc2574e62456fdde4e4c884167fe1dce07f2bd779d0beaa56e97fbc252"
-    },
-    {
-      "path": "Required dlls/Serilog.Enrichers.Environment.dll",
-      "sha256": "ef8917a7109f6d4f9d00e62e407de9698603245427289760bbf8dbbb147c1b59"
-    },
-    {
-      "path": "Required dlls/Serilog.Enrichers.Thread.dll",
-      "sha256": "9f85fbbe1d6cf5409c0cf489d27d6d7eaaf287318c09377a7bba7bde57113cc9"
-    },
-    {
-      "path": "Required dlls/Serilog.Extensions.Logging.dll",
-      "sha256": "f85465d3415981718d8bbeadae859e24f8507214498445dcdd7a8c9f80aeedd2"
-    },
-    {
-      "path": "Required dlls/Serilog.Settings.Configuration.dll",
-      "sha256": "2928790801e98fd0845a23e7101d66bf422cc0a29b9c6f81f9324855cfa19014"
-    },
-    {
-      "path": "Required dlls/Serilog.Sinks.Console.dll",
-      "sha256": "ded3b57b64eca479f2a659a244e4c403ebfb83a9a9b30ced893c145e77affd29"
-    },
-    {
-      "path": "Required dlls/Serilog.Sinks.Debug.dll",
-      "sha256": "9c7a39e429c97f198c10a52f2471ebe939456a05e25cc43521372db7103f950c"
-    },
-    {
-      "path": "Required dlls/Serilog.Sinks.File.dll",
-      "sha256": "6d8d84c9c14201674d9a309f51e952cf148ad33cdb66507d9677ebf1b1e4432b"
-    },
-    {
-      "path": "Required dlls/Serilog.Sinks.Literate.dll",
-      "sha256": "5e2e204439217c960237a894548680b39d5972fabfa3009538f43530eac23a3e"
-    },
-    {
-      "path": "Required dlls/Serilog.Sinks.RollingFile.dll",
-      "sha256": "82d6c16a6c178416b05577cbe668713a08ae9fc874342408d4339a147020bc10"
-    },
-    {
-      "path": "Required dlls/Serilog.Sinks.Trace.dll",
-      "sha256": "596c733522f2e1621e53a5fab5a188b86fa58cfe6821ef17c005ed2675e51aab"
-    },
-    {
-      "path": "Required dlls/Serilog.dll",
-      "sha256": "7344321f0385a0189d641d7a11371524b91327930bb8ebbef2dabd94bdac0ba8"
-    },
-    {
-      "path": "Required dlls/SerilogTraceListener.dll",
-      "sha256": "191fa60443e60668a8bb769f5092099a772935ea546020e6ba7dfb53d60a88a2"
-    },
-    {
-      "path": "Required dlls/SharpDX.Direct3D9.dll",
-      "sha256": "ea99fe82a6dbc11dc1b5b469111324928098fe484d18a6dbfd9079e3bdbca901"
-    },
-    {
-      "path": "Required dlls/SharpDX.Mathematics.dll",
-      "sha256": "b7a332317ee5164aa5c172e336db6a161335b80fcf79de3ae971919a9a6e1248"
-    },
-    {
-      "path": "Required dlls/SharpDX.dll",
-      "sha256": "0fc81d2498b8f3f9a57fc486d6fb9515380a562c4034bb9786a0eb9c51498977"
-    },
-    {
-      "path": "Required dlls/SigPlusNET.dll",
-      "sha256": "16628d4b7c8881fd6e3ecf4bf7ef8f00c1a0acc385812f40998d74f58aee5735"
-    },
-    {
-      "path": "Required dlls/SuniUSB.dll",
-      "sha256": "7308f56d2b7080d6209df6718c148a5583064cb48784cedb3750fc4f3ea55ca9"
-    },
-    {
-      "path": "Required dlls/Tamir.SharpSSH.dll",
-      "sha256": "cf8740516ecb28393a05e67f98de2cf076956cbd78ae075b91f7646d649845cc"
-    },
-    {
-      "path": "Required dlls/Tao.FreeGlut.dll",
-      "sha256": "590adef4f4448a7d46929bbb133ec8df3616808830f127b588bd5ebe8c9bb2ea"
-    },
-    {
-      "path": "Required dlls/Tao.OpenGl.dll",
-      "sha256": "ae5d0aaf229746bd8d96754925186fbee25ca112eab11abd4455fdc3a3204271"
-    },
-    {
-      "path": "Required dlls/Tao.Platform.Windows.dll",
-      "sha256": "cf37537920742492a24434b537955bc86df3fb3da753b8f8c4eb371c377418f5"
     },
     {
       "path": "Required dlls/VBbridges.dll",
       "sha256": "bd87df0a1b25866a6a54580922a157d68a46487765d7ce47a94af8e2a36068b5"
     },
     {
-      "path": "Required dlls/VideoCamLib.dll",
-      "sha256": "340b1c6dd83e7b67249820c4a799e6fad5b090365a1c3c0df6ad73a7e598229d"
-    },
-    {
       "path": "Required dlls/VirtualWeb.dll",
       "sha256": "e0b2dd0e711930134c3e9a7d6d0a9d9411a6b308b7023cb354298166a1a3fed6"
     },
     {
-      "path": "Required dlls/WebView2Loader.dll",
-      "sha256": "7dd7dcf920414e3629c7313fea95dac8f49de4a67d9bba6506fae2eb9bb437fb"
-    },
-    {
-      "path": "Required dlls/freeglut.dll",
-      "sha256": "2b40b53fb7bbc3afd5a68c2449b9fe3afcba150e6e5ae015dd1bcce379a91ad4"
-    },
-    {
-      "path": "Required dlls/log4net.dll",
-      "sha256": "1d45a6afa38f0b10814063f2a42e6efce45752853667650e765844b8566b3332"
-    },
-    {
       "path": "Required dlls/stdole.dll",
       "sha256": "d6cdf961c6d2712fe1958815e51a30960d79fff1e97788b7741627dba972e8f7"
-    },
-    {
-      "path": "Required dlls/vcruntime140.dll",
-      "sha256": "9d8d21022ff9d3f6b81a45209662a4f3481edc2befae0c73b83cf942eab8be25"
-    },
-    {
-      "path": "Required dlls/xImageDeviceManager.dll",
-      "sha256": "ca5d92560da458730d59d9831908c2009de8010922827b9de8cd4bb3e49e77e8"
-    },
-    {
-      "path": "Required dlls/zxing.dll",
-      "sha256": "561783a4358b422097452482d594fa14505f8c945556a630008ac1ecac0d4745"
-    },
-    {
-      "path": "Required dlls/zxing.presentation.dll",
-      "sha256": "8789a73fdaccc3df5323fac512373a81fcaeddfb2953186f06b5c6cf1e35d75d"
     }
   ]
 }

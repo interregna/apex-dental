@@ -1,4 +1,5 @@
-﻿using System;
+﻿// Modified for Apex Dental, 2026-10-25: use framework ZIP implementation; see NOTICE.
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Reflection;
@@ -6,7 +7,7 @@ using System.Text;
 using System.Xml;
 using System.Xml.XPath;
 using System.Text.RegularExpressions;
-using Ionic.Zip;
+using ZipFile=CodeBase.ZipArchiveBuilder;
 using System.Linq;
 using CodeBase;
 

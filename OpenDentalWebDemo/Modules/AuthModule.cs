@@ -1,4 +1,4 @@
-// Modified for the Apex Dental public source snapshot, 2026-10-24; see NOTICE.
+// Modified for the Apex Dental public source snapshot, 2026-10-25; see NOTICE.
 /*
  * Server-side authentication + role authorization for the web app.
  *
@@ -6,21 +6,20 @@
  * -> Authentication.CheckPassword, the same SHA3/hash path the desktop uses). A session
  * cookie maps to a UserNum; middleware resolves it per request, sets Security.CurUser,
  * requires a session for every /api/* call, and enforces role -> module authorization so
- * the six persona workspaces are enforced by the server, not just hidden in the UI.
+ * explicit business permissions are enforced by the server; unmapped APIs require admin.
  *
  * The user's ROLE is derived from their real OD user-group membership (UserGroups.GetForUser);
  * the group->role map below mirrors how a practice names its security groups. Admins map to
  * "full". /api/auth/seed-demo creates the six persona groups+users through the business layer.
  *
- * Demo caveat: OD's Security.CurUser is a process-global static, so this per-request assignment
- * is not safe under heavy concurrency (fine for single-practice demo use). A production port
- * would flow the user via AsyncLocal or refactor the Security surface. Cookie is HttpOnly but
- * not Secure until the demo runs behind HTTPS.
+ * User identity is isolated with AsyncLocal. Sessions expire on the server and
+ * are lost on restart. This remains a development preview.
  */
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Http;
 using OpenDentBusiness;
@@ -30,8 +29,20 @@ namespace OpenDentalWebDemo.Modules {
 	public static class AuthModule {
 		record LoginDto(string UserName,string Password);
 
-		//token -> UserNum
-		static readonly ConcurrentDictionary<string,long> _sessions=new ConcurrentDictionary<string,long>();
+		// Absolute expiration is enforced on every use, independently of browser cookies.
+		internal sealed record Session(long UserNum,DateTimeOffset Expires);
+		internal static readonly ConcurrentDictionary<string,Session> Sessions=new();
+		static readonly TimeSpan SessionLifetime=TimeSpan.FromHours(8);
+		internal static bool TrySession(string token,out long userNum) {
+			userNum=0;
+			if(token==null || !Sessions.TryGetValue(token,out var session)) { return false; }
+			if(session.Expires<=DateTimeOffset.UtcNow) { Sessions.TryRemove(token,out _); return false; }
+			userNum=session.UserNum;
+			return true;
+		}
+		internal static CookieOptions SessionCookie(bool https) => new CookieOptions {
+			HttpOnly=true,Secure=https,SameSite=SameSiteMode.Strict,Path="/",MaxAge=SessionLifetime,
+		};
 
 		//Real OD user-group Description -> web role. Practices name their groups; these are the demo's.
 		static readonly Dictionary<string,string> RoleByGroup=new Dictionary<string,string>(StringComparer.OrdinalIgnoreCase){
@@ -43,6 +54,7 @@ namespace OpenDentalWebDemo.Modules {
 		//Mirror of the client ROLES map (app.js) so the server is authoritative for scoping.
 		static readonly Dictionary<string,(string label,string landing,string[] core,string[] mods)> Roles=
 			new Dictionary<string,(string,string,string[],string[])>{
+			{"unassigned",("No workspace assigned","",Array.Empty<string>(),Array.Empty<string>())},
 			{"full",("Full access","appts",new[]{"appts","family","account","chart","images","reports","sign"},new string[0])},
 			{"frontdesk",("Front Desk","appts",new[]{"appts","family","account","sign"},new[]{"schedweek","sched-appt-edit","sched-appt-booking","sched-confirm-list","sched-planned-unsched","sched-recall-asap","sched-slot-search","sched-blockouts","comm","misc-sheets","comm-letters","patfam-referrals","patfam-notes","billing-payment-entry","billing-statements"})},
 			{"dentist",("Dentist","chart",new[]{"chart","appts","images"},new[]{"clinical-perio-entry","clinical-proc-entry","treatplan","clinical-rx-entry","clinical-ortho-chart","chart-documents","clinical-lab-cases","patfam-medical","patfam-notes","comm-letters","sched-appt-edit","sched-confirm-list"})},
@@ -50,45 +62,6 @@ namespace OpenDentalWebDemo.Modules {
 			{"assistant",("Dental Assistant","chart",new[]{"chart","images","appts"},new[]{"clinical-proc-entry","clinical-lab-cases","chart-documents","clinical-ortho-chart","misc-sheets","patfam-medical","sched-appt-edit","sched-appt-booking"})},
 			{"billing",("Billing / Insurance","account",new[]{"account","family"},new[]{"billing-payment-entry","billing-adjustments","billing-claim-builder","billing-payplans","billing-statements","billing-statement-run","billing-deposits","billing-aging-dashboard","ins-coverage-panel","ins-carrier-manager","ins-plan-subscriber-editor","ins-claim-receive","ins-verification","comm"})},
 			{"manager",("Office Manager","reports",new[]{"reports","appts","account"},new[]{"comm-tasks-browser","setup-practice-editor","setup-security-view","setup-feescheds","setup-fee-tools","setup-preferences","setup-clinics","setup-employees-timeclock","setup-appttypes-autocodes","billing-statements","billing-statement-run","billing-aging-dashboard","reports-daysheet","ins-verification"})},
-		};
-
-		//Path -> the module that owns it, for authorization. Only role-sensitive prefixes are gated;
-		//core/shared endpoints (patients, family, account, appointments, reports, toothchart, docs,
-		//scan, sheets, ui) are available to any authenticated user. Ordered; first match wins.
-		static readonly (Regex rx,string mod)[] Gates=new[]{
-			(new Regex(@"^/api/deposits"),"billing-deposits"),
-			(new Regex(@"^/api/(payments|payment-types)|^/api/patients/\d+/payments"),"billing-payment-entry"),
-			(new Regex(@"^/api/(adjustments|adjustment-types)|^/api/patients/\d+/adjustments"),"billing-adjustments"),
-			(new Regex(@"^/api/patients/\d+/unbilled-procs"),"billing-claim-builder"),
-			(new Regex(@"^/api/payplans|^/api/patients/\d+/payplans"),"billing-payplans"),
-			(new Regex(@"^/api/statements|^/api/patients/\d+/statements"),"billing-statements"),
-			(new Regex(@"^/api/insplans|^/api/inssubs|^/api/patients/\d+/(insurance|patplans)|^/api/insurance/(covcats|feescheds)"),"ins-plan-subscriber-editor"),
-			(new Regex(@"^/api/carriers"),"ins-carrier-manager"),
-			(new Regex(@"^/api/claimpayments|^/api/claims/\d+/receive"),"ins-claim-receive"),
-			(new Regex(@"^/api/insverify"),"ins-verification"),
-			(new Regex(@"^/api/(perio|patients/\d+/perio)"),"clinical-perio-entry"),
-			(new Regex(@"^/api/(ortho|patients/\d+/orthochart|orthochart)"),"clinical-ortho-chart"),
-			(new Regex(@"^/api/(laboratories|labcases|patients/\d+/labcases)"),"clinical-lab-cases"),
-			(new Regex(@"^/api/(rx|rxdefs|patients/\d+/rx)"),"clinical-rx-entry"),
-			(new Regex(@"^/api/(treatplans|patients/\d+/treatplans)"),"treatplan"),
-			(new Regex(@"^/api/provider-schedules"),"sched-provider-schedule"),
-			(new Regex(@"^/api/slotsearch"),"sched-slot-search"),
-			(new Regex(@"^/api/confirmlist|^/api/appointments/\d+/confirm"),"sched-confirm-list"),
-			(new Regex(@"^/api/blockouts"),"sched-blockouts"),
-			(new Regex(@"^/api/(planned|unsched|patients/\d+/unsched)"),"sched-planned-unsched"),
-			(new Regex(@"^/api/setup/security"),"setup-security-view"),
-			(new Regex(@"^/api/setup/employees|^/api/setup/clockevents"),"setup-employees-timeclock"),
-			(new Regex(@"^/api/setup/(appttypes|autocodes)"),"setup-appttypes-autocodes"),
-			(new Regex(@"^/api/setup/(defs|defcats|operatories|providers)"),"setup-practice-editor"),
-			(new Regex(@"^/api/prefs"),"setup-preferences"),
-			(new Regex(@"^/api/clinics"),"setup-clinics"),
-			(new Regex(@"^/api/feescheds"),"setup-feescheds"),
-			(new Regex(@"^/api/tasks"),"comm-tasks-browser"),
-			(new Regex(@"^/api/billing/"),"billing-statement-run"),
-			(new Regex(@"^/api/ar/"),"billing-aging-dashboard"),
-			(new Regex(@"^/api/(letter-types|patients/\d+/letters)"),"comm-letters"),
-			(new Regex(@"^/api/feetools/"),"setup-fee-tools"),
-			(new Regex(@"^/api/daysheet"),"reports-daysheet"),
 		};
 
 		//---- TRUE per-user permissions (Open Dental GroupPermission / EnumPermType) ----
@@ -135,6 +108,8 @@ namespace OpenDentalWebDemo.Modules {
 			(new Regex(@"^/api/(documents|image-categories|scan)|^/api/patients/\d+/(documents|documents-tree)"),EnumPermType.ImagingModule,EnumPermType.ImageEdit),
 			(new Regex(@"^/api/(sheets|sheetdefs|letter-types)|^/api/patients/\d+/(sheets|letters|consent)"),EnumPermType.ChartModule,EnumPermType.SheetEdit),
 			//family / patient
+			(new Regex(@"^/api/patients$"),EnumPermType.FamilyModule,EnumPermType.PatientCreate),
+			(new Regex(@"^/api/patients/\d+$"),EnumPermType.FamilyModule,EnumPermType.PatientEdit),
 			(new Regex(@"^/api/family"),EnumPermType.FamilyModule,EnumPermType.PatientEdit),
 			(new Regex(@"^/api/patients/\d+/(details|notes|referrals|commlog)"),EnumPermType.FamilyModule,EnumPermType.PatientEdit),
 			(new Regex(@"^/api/(referrals|refattaches)"),EnumPermType.FamilyModule,EnumPermType.ReferralEdit),
@@ -179,14 +154,15 @@ namespace OpenDentalWebDemo.Modules {
 
 		static bool IsWrite(string method) => method=="POST" || method=="PUT" || method=="DELETE" || method=="PATCH";
 
-		///<summary>The permission a request needs, or null if the endpoint isn't permission-gated.</summary>
-		static EnumPermType? RequiredPerm(string path,string method){
+		///<summary>The explicit permission a request needs. Unmapped APIs require SecurityAdmin.</summary>
+		internal static EnumPermType RequiredPerm(string path,string method){
+			path=path.ToLowerInvariant();
 			foreach(var r in PermRules){
 				if(r.rx.IsMatch(path)){
 					return IsWrite(method)?r.write:r.read;
 				}
 			}
-			return null;
+			return EnumPermType.SecurityAdmin;//Unmapped APIs fail closed until explicitly reviewed.
 		}
 
 		static bool UserHasPerm(Userod user,EnumPermType perm){
@@ -208,17 +184,7 @@ namespace OpenDentalWebDemo.Modules {
 			if(UserGroups.IsAdminGroup(groups.Select(x => x.UserGroupNum).ToList())){
 				return "full";
 			}
-			return "full";//no mapped group -> full (a real deployment would default to least privilege)
-		}
-
-		static bool RoleAllows(string role,string mod){
-			if(!Roles.TryGetValue(role,out var r)){
-				return true;
-			}
-			if(role=="full"){
-				return true;
-			}
-			return r.core.Contains(mod) || r.mods.Contains(mod);
+			return "unassigned";
 		}
 
 		static object SessionInfo(long userNum){
@@ -250,25 +216,27 @@ namespace OpenDentalWebDemo.Modules {
 					return Results.Json(new { error="Invalid username or password." },statusCode:401);
 				}
 				Security.CurUser=user;
-				string token=Guid.NewGuid().ToString("N");
-				_sessions[token]=user.UserNum;
-				ctx.Response.Cookies.Append("odsess",token,new CookieOptions{
-					HttpOnly=true,SameSite=SameSiteMode.Lax,Path="/",MaxAge=TimeSpan.FromHours(24),
-				});
+				string token=Convert.ToHexString(RandomNumberGenerator.GetBytes(32));
+				foreach(var expired in Sessions.Where(x => x.Value.Expires<=DateTimeOffset.UtcNow)) {
+					Sessions.TryRemove(expired.Key,out _);
+				}
+				if(ctx.Request.Cookies.TryGetValue("odsess",out string previous)) { Sessions.TryRemove(previous,out _); }
+				Sessions[token]=new Session(user.UserNum,DateTimeOffset.UtcNow+SessionLifetime);
+				ctx.Response.Cookies.Append("odsess",token,SessionCookie(ctx.Request.IsHttps));
 				SecurityLogs.MakeLogEntry(EnumPermType.UserLogOnOff,0,"Web login: "+user.UserName);
 				return Results.Json(SessionInfo(user.UserNum));
-			});
+			}).RequireRateLimiting("login");
 
 			app.MapPost("/api/auth/logout",(HttpContext ctx) => {
 				if(ctx.Request.Cookies.TryGetValue("odsess",out string tok)){
-					_sessions.TryRemove(tok,out _);
+					Sessions.TryRemove(tok,out _);
 				}
 				ctx.Response.Cookies.Delete("odsess");
 				return Results.Json(new { authed=false });
 			});
 
 			app.MapGet("/api/auth/me",(HttpContext ctx) => {
-				if(ctx.Request.Cookies.TryGetValue("odsess",out string tok) && _sessions.TryGetValue(tok,out long userNum)){
+				if(ctx.Request.Cookies.TryGetValue("odsess",out string tok) && TrySession(tok,out long userNum)){
 					return Results.Json(SessionInfo(userNum));
 				}
 				return Results.Json(new { authed=false });
@@ -285,7 +253,7 @@ namespace OpenDentalWebDemo.Modules {
                     return Results.Problem("OD_DEMO_PASSWORD must contain at least 12 characters.");
                 }
 				if(!ctx.Request.Cookies.TryGetValue("odsess",out string sessionToken)
-					|| !_sessions.TryGetValue(sessionToken,out long sessionUserNum)){
+					|| !TrySession(sessionToken,out long sessionUserNum)){
 					return Results.StatusCode(403);
 				}
 				Userod sessionUser=UserFor(sessionUserNum);
@@ -344,37 +312,40 @@ namespace OpenDentalWebDemo.Modules {
 		///after UseStaticFiles so static assets (the SPA + login screen) load unauthenticated.</summary>
 		public static void UseAuth(WebApplication app){
 			app.Use(async (ctx,next) => {
-				string path=ctx.Request.Path.Value??"";
-				long userNum=0;
-				if(ctx.Request.Cookies.TryGetValue("odsess",out string tok) && _sessions.TryGetValue(tok,out long un)){
-					userNum=un;
-					Userod u=UserFor(userNum);
-					if(u!=null){
-						Security.CurUser=u;//per-request user context (see class-header caveat)
+				Security.CurUser=null;
+				try {
+					string path=(ctx.Request.Path.Value??"").ToLowerInvariant();
+					long userNum=0;
+					if(ctx.Request.Cookies.TryGetValue("odsess",out string tok) && TrySession(tok,out long un)){
+						userNum=un;
+						Userod u=UserFor(userNum);
+						if(u!=null && !u.IsHidden){ Security.CurUser=u; }
+						else { userNum=0; Sessions.TryRemove(tok,out _); }
 					}
-				}
-				//Non-API and the auth endpoints themselves are always reachable.
-				if(!path.StartsWith("/api/") || path.StartsWith("/api/auth/")){
+					//Non-API and the auth endpoints themselves are always reachable.
+					if(!path.StartsWith("/api/") || path.StartsWith("/api/auth/")){
+						await next();
+						return;
+					}
+					if(userNum==0){
+						ctx.Response.StatusCode=401;
+						await ctx.Response.WriteAsync("Not authenticated");
+						return;
+					}
+					//TRUE per-user authorization: enforce the Open Dental permission the endpoint
+					//requires against the logged-in user's real GroupPermissions. Reads need the
+					//module permission; writes need the specific action permission. This is the
+					//server-side security; the role only drives the client's rail presentation.
+					Userod user=UserFor(userNum);
+					EnumPermType perm=RequiredPerm(path,ctx.Request.Method);
+					if(!UserHasPerm(user,perm)){
+						ctx.Response.StatusCode=403;
+						await ctx.Response.WriteAsync($"Permission denied: this action requires the '{perm}' permission, which {user?.UserName} does not have.");
+						return;
+					}
 					await next();
-					return;
 				}
-				if(userNum==0){
-					ctx.Response.StatusCode=401;
-					await ctx.Response.WriteAsync("Not authenticated");
-					return;
-				}
-				//TRUE per-user authorization: enforce the Open Dental permission the endpoint
-				//requires against the logged-in user's real GroupPermissions. Reads need the
-				//module permission; writes need the specific action permission. This is the
-				//server-side security; the role only drives the client's rail presentation.
-				Userod user=UserFor(userNum);
-				EnumPermType? perm=RequiredPerm(path,ctx.Request.Method);
-				if(perm!=null && !UserHasPerm(user,perm.Value)){
-					ctx.Response.StatusCode=403;
-					await ctx.Response.WriteAsync($"Permission denied: this action requires the '{perm}' permission, which {user?.UserName} does not have.");
-					return;
-				}
-				await next();
+				finally { Security.CurUser=null; }
 			});
 		}
 	}
