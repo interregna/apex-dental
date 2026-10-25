@@ -4,7 +4,7 @@
   "files": {
     ".env.example": "e9206c854cde7808874cd71e286263c2b66e529fbd35cbda1981ec2a538efff5",
     ".gitattributes": "8cff258be5b44df5e86a5da3ea80cb50e8152b1582963f243542f6522497174b",
-    ".github/workflows/ci.yml": "053bb6765c7316a018680941b55fc20c78108d5003879043d9b2ffac685cafda",
+    ".github/workflows/ci.yml": "3ee53afc1b6b7af4af85cc70241b5d61a5a73f2c2c87e8ad7346ce8a03166621",
     ".gitignore": "dba22bc997372b339a0d7f970a2232cdedb89c38867e861478b2a682e3ddfc34",
     "CONTRIBUTING.md": "fcc3d27507660ab402f0ac2d31e38d90129a64bc06e10cbe4028213927219dc5",
     "CodeBase/Controls/MessageBox.cs": "ae6109b5e4f2db924597bfd7b2a3fe8d83cdbda4710e457e96c4ed3d35014b82",
