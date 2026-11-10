@@ -88,11 +88,11 @@
       },
       "System.Resources.Extensions": {
         "type": "Direct",
-        "requested": "[10.0.14, )",
-        "resolved": "10.0.14",
-        "contentHash": "omLaXQoAyaXp6U/AdG7JXAITonybgBJN/cajIjpGAvkzC4/Yuu5ECxi2P04pnzEVmNq7NzcZPMQcrLwWdANYbg==",
+        "requested": "[11.0.0, )",
+        "resolved": "11.0.0",
+        "contentHash": "lqGMnpPZ/Iikqllh8m9645FTTameoSMAwrtkYR9kz8KMBhBvjXOEUn/hmSdzZ8GJwMgQeUBAiT597N97ka+fkQ==",
         "dependencies": {
-          "System.Formats.Nrbf": "10.0.14"
+          "System.Formats.Nrbf": "11.0.0"
         }
       },
       "System.Security.Cryptography.Pkcs": {
@@ -134,6 +134,11 @@
         "resolved": "10.0.14",
         "contentHash": "oJYTzyBcc2g06mU699LaJfm964mdlFg6l7BPeqdu8bmK6Fdy9fL9BWugGsZAqWtjnNWp4tanZZ9DlZwHJmmhgg=="
       },
+      "System.Collections.Immutable": {
+        "type": "Transitive",
+        "resolved": "11.0.0",
+        "contentHash": "Z3pTTvMGhsThIfPDboJDwBY+yCqfNCpYyL4fcPCNo4rVYhlS7Kmg4nkABanRYRSVDPZ3qiXPdGymBzMDuawPNg=="
+      },
       "System.Diagnostics.EventLog": {
         "type": "Transitive",
         "resolved": "10.0.14",
@@ -141,8 +146,19 @@
       },
       "System.Formats.Nrbf": {
         "type": "Transitive",
-        "resolved": "10.0.14",
-        "contentHash": "pl9R3NfEKEYnU9Dj74AKRpe3tFQEA4tcLepHLOUQVT2vAyTW6E+WeKS3+JydxYnig4hXtLOrLNDcBkUNzm+9FA=="
+        "resolved": "11.0.0",
+        "contentHash": "y74qN1fv91s5+A3a3or4zpAI93l8HE5hJ9aTZlbH6zq7f3tF19luVZAwgk4UAsZ17WUFWU7MyJKDFzjpY/9h3Q==",
+        "dependencies": {
+          "System.Reflection.Metadata": "11.0.0"
+        }
+      },
+      "System.Reflection.Metadata": {
+        "type": "Transitive",
+        "resolved": "11.0.0",
+        "contentHash": "6mLHh96MZR4PJbNH8dUOjCkYWLR7N4FYseSjqGIgEYj8so3j1CvQTpTjouI2jInKnJYSGYLFHwdQEJtMKWvlQQ==",
+        "dependencies": {
+          "System.Collections.Immutable": "11.0.0"
+        }
       },
       "System.Security.Cryptography.ProtectedData": {
         "type": "Transitive",
