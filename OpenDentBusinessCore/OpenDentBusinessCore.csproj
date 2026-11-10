@@ -54,7 +54,7 @@
     <PackageReference Include="System.Security.Cryptography.Pkcs" Version="10.0.14" />
     <PackageReference Include="Microsoft.Win32.SystemEvents" Version="10.0.14" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.14" />
-    <PackageReference Include="System.Resources.Extensions" Version="10.0.14" />
+    <PackageReference Include="System.Resources.Extensions" Version="11.0.0" />
   </ItemGroup>
   <ItemGroup>
     <!-- Exclude DLLs whose simple names collide with NuGet packages or the .NET 10
