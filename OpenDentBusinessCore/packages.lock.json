@@ -22,9 +22,9 @@
       },
       "Microsoft.Win32.SystemEvents": {
         "type": "Direct",
-        "requested": "[10.0.14, )",
-        "resolved": "10.0.14",
-        "contentHash": "axfieK5mj+uS/wLYl0dhlRFWdNP1iKHhx/M6DZNXPCSve7q4TCogw//W6BWGsYhnWuSw55aqheHE0a8l8s1oTw=="
+        "requested": "[11.0.0, )",
+        "resolved": "11.0.0",
+        "contentHash": "cI7p6SRuPcNTsgoryUpb367r1DhE+69l5XZeAS1UmyU293gwkguh2LPMiCg0YlZUZxBx0CPfXqI59Q/20Dlnvg=="
       },
       "MySqlConnector": {
         "type": "Direct",
