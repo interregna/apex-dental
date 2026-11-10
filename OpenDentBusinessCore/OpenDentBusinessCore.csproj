@@ -44,7 +44,7 @@
     <PackageReference Include="MySqlConnector" Version="2.6.2" />
     <PackageReference Include="System.Configuration.ConfigurationManager" Version="10.0.14" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
-    <PackageReference Include="System.Drawing.Common" Version="6.0.0" />
+    <PackageReference Include="System.Drawing.Common" Version="11.0.0" />
     <PackageReference Include="PDFsharp" Version="6.2.4" />
     <PackageReference Include="System.Management" Version="10.0.14" />
     <PackageReference Include="System.DirectoryServices" Version="10.0.14" />
@@ -52,7 +52,7 @@
     <PackageReference Include="MailKit" Version="4.18.2" />
     <!-- Advance transitive minimums to the current .NET 10 servicing release. -->
     <PackageReference Include="System.Security.Cryptography.Pkcs" Version="10.0.14" />
-    <PackageReference Include="Microsoft.Win32.SystemEvents" Version="10.0.14" />
+    <PackageReference Include="Microsoft.Win32.SystemEvents" Version="11.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.14" />
     <PackageReference Include="System.Resources.Extensions" Version="10.0.14" />
   </ItemGroup>
